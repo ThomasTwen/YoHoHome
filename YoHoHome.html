@@ -13,10 +13,35 @@ body { background-color: black;
 	margin-inline: auto;
 }
 </style>
+<script type="text/javascript">
+function toggleAbout(changeTo) {
+	if (changeTo) {
+		document.getElementById("aboutDiv").style.display = "inline";
+		document.getElementById("aboutHeadline").firstChild.setAttribute("onclick","toggleAbout(false)");
+		document.getElementById("aboutHeadline").firstChild.innerHTML = "About This App (hide)"
+	} else {
+		document.getElementById("aboutDiv").style.display = "none";
+		document.getElementById("aboutHeadline").firstChild.setAttribute("onclick", "toggleAbout(true)");
+		document.getElementById("aboutHeadline").firstChild.innerHTML = "About This App"
+	}
+}
+</script>
 </head>
 <body>
-<div class="AppArea">Image Credits:<br>
+<div class="AppArea">
+
+
+<div id="aboutHeadline" style="text-align: center;"><a onclick="toggleAbout(true)">About This App</a></div>
+<div style="display: none" id="aboutDiv">
+This app was developed by Thomas Twenh&ouml;ven and is not associated with the creators of the base game.<br><br>
+
+Am I storing any of your data? No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close (or reload) the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
+This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br><br>
+
+Image Credits:<br>
 <a href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a></div>
+
+</div>
 
 
 </body></html>
