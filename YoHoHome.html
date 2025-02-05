@@ -4,12 +4,14 @@
 <title>YoHoHome</title>
 <link rel="icon" type="image/x-icon" href="data:image/spng;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAACqAAAAqgB7e92gQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAALXSURBVFiFvdfPa11FFAfwz2hqUVsbClr8EYjBhaKudKEtuFH3oishJcWFYBDBZOk2C3HzQEWJhSr+DNV/QcUfNK6r6EIMIqUGC1ZbqqVqj4s3t97c3Jm+J08HDndmzveec+acM2dmRISIgFvxBTax3MxPirCcZa9j5tJ8C/A8okVzE1Q+15G90uKZwQpOd0AHJ2jAfEf26axzZgpHcZ/t7YqeOZBSmsYs9uEkNiLiXAmPKzvjaTyHB+W4RA+tdlZxP9bwSwH/I97D3T0eWC38s8kwOfqYgQF24MUKpksX8QZ2ZuWDCnY5RYSU0hz2Z1ftx5Mtd53ALRX3ltrnOI7F1txrOIa/cCwiNkpJU7P639KgV1clc1/9r5VHRDnT8duYLi+1jyPi2RKzZsAjEzJgV42Zmmq0ZTKlq/C7uoGjtrMRcV2JWVJw/YSUw+6U0k3jGnB+QsqbdqHE+D9CcD4iri4xexVExAV81RaCb/CJYRHpa2fwIb61dcUnquZV6sArhnt4A9Ot+TsMz/T2Pv8Mu1qYm3Gq4VVPyooBT2UBBwrn+8XM/xN7ejCPZv77NQNqMb4nf7cVpIjYwNk8/CEifu35/2T+7qjo6PcAbjSMY+DlHv6hzFvPHug7gt/NmJ9x7VghwDO2xvhI9shDmXcOaxl7FN/jcdyOB/BR5/+nxzXgTZc/YGYz9rYRsB+UDJgqROZ1PIZrKtF7OKV0BnsrmKatFTmVXfDOCCsr0ZedcfE4HvVCMsB3IypfR+qTUTTA8IY7jwXbL5CDjHk7j08ZZn5TpJpa8FPuv1BZyGrWMe+fHLJUWc2gJWyx5Y1Pc78pNsfxUu4vXsabbVpi9Gv5nYbnwCEcxteYyl54C0/gD9zQE9Lqtbxb1xtaKJTg3diDu/LcAezL/XsLObVQyZfi02y+VsPHIRzsyL70NGuDVjqg2QkaUH6ctkAz2SWbWJqU8pb83uf531Pa0xJ0bGAIAAAAAElFTkSuQmCC"/>
 <style>
-body { background-color: black;
+body { 
+	background-color: #303030;
+	color: white;
 }
 
 
 .AppArea {
-	background-color: lightblue;
+	background-color: black;
 	max-width: 500px;
 	margin-inline: auto;
 }
@@ -26,14 +28,38 @@ function toggleAbout(changeTo) {
 		document.getElementById("aboutHeadline").firstChild.innerHTML = "About This App"
 	}
 }
+
+var nameEntryString = "<div class=\"nameEntry\"><input type=\"text\" oninput=\"nameEntryChange(this)\"></div>";
+function updateNameEntryArea() {
+	// There should be at least two name fields, the last of which should be empty
+	var children = document.getElementById("nameEntryArea").children;
+	var empties =0;
+	for (var i = 0; i < children.length; i++) {
+  		if (!children[i].firstChild.value) {
+  			empties++;
+  		}
+	}
+	if (empties == 0) {
+		document.getElementById("emptyDiv").innerHTML = nameEntryString;	
+		document.getElementById("nameEntryArea").append(document.getElementById("emptyDiv").firstChild);
+	}
+	if (i == 0) {
+		document.getElementById("emptyDiv").innerHTML = nameEntryString;	
+		document.getElementById("nameEntryArea").append(document.getElementById("emptyDiv").firstChild);
+	}
+}
+
+function nameEntryChange(inputelement) {
+	updateNameEntryArea();
+}
 </script>
 </head>
-<body>
+<body onLoad="updateNameEntryArea()">
 <div class="AppArea">
-
+<div class="nameEntryArea" id="nameEntryArea"></div>
 
 <div id="aboutHeadline" style="text-align: center;"><a onclick="toggleAbout(true)">About This App</a></div>
-<div style="display: none" id="aboutDiv">
+<div style="display: none" id="aboutDiv"><br>
 This app was developed by Thomas Twenh&ouml;ven and is not associated with the creators of the base game.<br><br>
 
 Am I storing any of your data? <br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close (or reload) the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
@@ -43,6 +69,6 @@ Image Credits:<br>
 <a href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a></div>
 
 </div>
-
+<div id="emptyDiv" style="display: none;"></div>
 
 </body></html>
