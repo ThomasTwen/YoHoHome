@@ -21,7 +21,6 @@ body {
 	font-size: 0.7em; 
 	color: orange;
 	text-align: center;
-	font-weight: bold;
 }
 .aboutText {
 	font-size: 0.7em; 
@@ -143,12 +142,14 @@ function updateNameEntryArea() {
   			//Not empty. 
   			children[i].firstChild.style.background = "orange";
   			children[i].style.borderColor = "orange"
+  			children[i].children[1].style.color = "orange"
   			//Lets search for duplicate entries. Note that nameDouble can still be positive from a duplicate found in a previous field, but needs to be such a high-level variable for later
   			existingNames++;
   			for (var j = 0; j < i; j++) {
   				if (children[i].children[1].value === children[j].children[1].value) {
   					nameDouble = true;
   					children[i].firstChild.style.background = "red";
+  					children[i].children[1].style.color = "red"
   		  			children[i].style.borderColor = "red";
   				}
   			}
