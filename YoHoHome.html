@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <head>
 <meta name="viewport" content="width=device-width">
 <title>YoHoHome</title>
@@ -8,37 +8,153 @@ body {
 	background-color: #303030;
 	color: white;
 }
-
-
 .AppArea {
 	background-color: black;
 	max-width: 500px;
 	margin-inline: auto;
+	font-size: 1.5em;
+	padding: 5px;
+	margin-top: 0px;
+	text-align: center;
 }
-</style>
-<script type="text/javascript">
-function toggleAbout(changeTo) {
-	if (changeTo) {
-		document.getElementById("aboutDiv").style.display = "inline";
-		document.getElementById("aboutHeadline").firstChild.setAttribute("onclick","toggleAbout(false)");
-		document.getElementById("aboutHeadline").firstChild.innerHTML = "About This App (hide)"
-	} else {
-		document.getElementById("aboutDiv").style.display = "none";
-		document.getElementById("aboutHeadline").firstChild.setAttribute("onclick", "toggleAbout(true)");
-		document.getElementById("aboutHeadline").firstChild.innerHTML = "About This App"
-	}
+.aboutHeadline {
+	font-size: 0.7em; 
+	color: orange;
+	text-align: center;
+	font-weight: bold;
+}
+.aboutText {
+	font-size: 0.7em; 
+	color: white;
+	padding: 20px 20px 20px 20px;
+	display: none;
+}
+a:link {
+	color: lightblue;
+}
+a:visited {
+	color: lightblue;
+}
+.instructionHeadline {
+	color: orange;
+	font-size: 1.5em;
+	margin-left: 15px;
+}
+.userBoxMargin {
+	border-radius: 10px;
+	border: 2px solid orange;
+	margin: 10px 5px;
+	padding: 10px;
+}
+.nameEntry {
+	border-radius: 10px;
+	border: 2px solid #303030;
+	margin: 10px 0px;
+	padding: 10px;
 }
 
-var nameEntryString = "<div class=\"nameEntry\"><input type=\"text\" oninput=\"nameEntryChange(this)\"></div>";
+.mainHeadline {
+	font-size: 1.5em;
+	color: orange;
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.nameEntryAreaWrapper {
+	padding: 10px 34.5px;
+}
+.nameEntryTickMark {
+	background-color: #303030;
+	margin-right: 10px;
+	height: 52px;
+	width: 52px;
+	vertical-align: middle;
+	border: none;
+	border-radius: 5px;
+}
+input[type=text] {
+  background-color: #303030;
+  color: orange;
+  font-size: 1.5em;
+  border-radius: 5px;
+  border: none;
+  font-weight: bold;
+  vertical-align: middle;
+  text-align: center;
+  padding: 5px;
+}
+input:active, input:focus {
+	outline: none;
+}
+.startGameErrorMessage {
+	border-radius: 10px;
+	border: 2px solid #303030;
+	margin: 10px;
+	color: white;
+	font-size: 0.7em;
+	padding: 10px;
+	width: 75%;
+	margin-inline: auto;
+}
+.startGameButton {
+	color: white;
+	margin: 10px;
+	background-color: #303030;
+	border-radius: 10px;
+	width: 75%;
+	font-size: 1.5em;
+	padding: 10px;
+	text-align: center;
+	margin-inline: auto;
+}
+
+
+</style>
+<script type="text/javascript">
+var allowGameStart = false;
+function toggleAbout(changeTo) {
+	if (changeTo) {
+		document.getElementById("aboutDiv").style.display = "block";
+		document.getElementById("aboutHeadline").setAttribute("onclick","toggleAbout(false)");
+		document.getElementById("aboutHeadline").innerHTML = "About This App (hide)"
+	} else {
+		document.getElementById("aboutDiv").style.display = "none";
+		document.getElementById("aboutHeadline").setAttribute("onclick", "toggleAbout(true)");
+		document.getElementById("aboutHeadline").innerHTML = "About This App (click)"
+	}
+}
+var nameEntryString = "<div class=\"nameEntry\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADUUlEQVR4nO3cO2gVQRTG8YlPUEFBsfDR+AQRtREsBEE70UZEsFBEIYU2YmOqYGGhdhIQBBG0EjSVIIqCqCCIElIEtdI0Por4SopANPcvIxtMJCbZmbl3Zme/X5/L2f12Z5fZc2KMiIiIiIiIiIiIiIiIiIgEBCwE5oT8TfEL4zFwB5jr+jsSNowxCiWhMBRKgmEolATDUCgJhqFQEgzDegbMa3pxdYNbGP3A8ti1Zwe3MIaALbFrzw5uYTSAQ7Frzw5uYVidsWvPDu5hdANtsevPCu5h9Nq/jV1/VnAPYwBYE7v+rOAexgiwK3b9WcE9DKs9dv1ZwS+My7Hrzwp+YTzSV8J0wngHLAtZT63hF8YgsDn2MWQDvzBGgf2xjyEb+IVhdcQ+hmzgH8ZtbYukE0YPsCBUPbWGfxifgFWxjyML+IcxDOwwqQHWAsdMhQCLim/aPo6a1ADzgVfj9vuXmvzvDOuSSRHQxUSfgb0m7zAeALNNaoCDU3w3vpramwdhwngLLDGJPje+T1N8H7DN5BPGD2CTSfy5MZM3kbPArIqH8SvZpRg46bjurqjo25R1xqTKDp4AdynvG3C4YneGdcOkzvakAvdxc9NeuRUJ47ldok0V2Lco4Knjgb4HdiYexgdgpakSYDHw0vGAfwIXQs7eES4M+zKy3VSR/VxZvOK6egGsTyiMRiufdU1hW+uBNx4nYdCnZYZwYVjnTQ6A1cWzwUfp/TDChnEvyW0RV8A64KPnSZnxfhhhw3htn4kmN8DG4qT6aEy3HxY4jC/2YjK5ArYCXwOcqL7J9sMCh2Hf9nab3NmvacX4lq/h8fthgcOwTpm6sFdecUJDeAhsCBzGdVM3wL6iLT+EBuE8qe0/hAEOFGt1KvprP5YMHCnaLWMb0ljy3zvleOBlpyyNJU+yfJ0mns5WL9eVAJyLEEa3+m+nDuViC8Po1Vjy9HdJG3ClBWEMaCy5XCjXmhjGiMaSS7Lb3cCtJgXSXrYe8etkmYrGkiN2svxLY8kJdLKM0VhyQp0sgxpLTqeTZVRjyWl1snQ0sx4xpTpZNJacUCdLT2rDQdnj/50sGktOqJNlOMmx5DphYifLidj1iPkTyp5s+m9FRERERERERERExOTvNx4w2r5e+WKBAAAAAElFTkSuQmCC\"";
+nameEntryString += "class =\"nameEntryTickMark\"/><input type=\"text\" oninput=\"nameEntryChange(this)\" size=\"16\"></div>";
 function updateNameEntryArea() {
 	// There should be at least two name fields, the last of which should be empty
+	// Loop over all name entry areas
+	var nameDouble = false;
 	var children = document.getElementById("nameEntryArea").children;
-	var empties =0;
+	var empties = 0;
+	var existingNames = 0;
 	for (var i = 0; i < children.length; i++) {
-  		if (!children[i].firstChild.value) {
+		//check if field is empty
+  		if (!children[i].children[1].value) {
+  			//its empty!
   			empties++;
+  			children[i].firstChild.style.background = "#303030";
+  			children[i].style.borderColor = "#303030"
+  		} else {
+  			//Not empty. 
+  			children[i].firstChild.style.background = "orange";
+  			children[i].style.borderColor = "orange"
+  			//Lets search for duplicate entries. Note that nameDouble can still be positive from a duplicate found in a previous field, but needs to be such a high-level variable for later
+  			existingNames++;
+  			for (var j = 0; j < i; j++) {
+  				if (children[i].children[1].value === children[j].children[1].value) {
+  					nameDouble = true;
+  					children[i].firstChild.style.background = "red";
+  		  			children[i].style.borderColor = "red";
+  				}
+  			}
   		}
 	}
+	//We dont have enough input fields
 	if (empties == 0) {
 		document.getElementById("emptyDiv").innerHTML = nameEntryString;	
 		document.getElementById("nameEntryArea").append(document.getElementById("emptyDiv").firstChild);
@@ -46,6 +162,29 @@ function updateNameEntryArea() {
 	if (i == 0) {
 		document.getElementById("emptyDiv").innerHTML = nameEntryString;	
 		document.getElementById("nameEntryArea").append(document.getElementById("emptyDiv").firstChild);
+	}
+	//Set the error message
+	if (nameDouble) {
+		//We have a double name
+		document.getElementById("startGameErrorMessage").style.display = "block";
+		document.getElementById("startGameErrorMessage").innerHTML ="All names must be different!"
+		document.getElementById("startGameErrorMessage").style.borderColor = "red";
+		document.getElementById("startGameErrorMessage").style.color = "red";
+		document.getElementById("startGameButton").style.bgcolor = "#303030";
+		allowGameStart = false;
+	} else if (existingNames < 2) {
+		// We dont have two names yet
+		document.getElementById("startGameErrorMessage").style.display = "block";
+		document.getElementById("startGameErrorMessage").innerHTML ="Please enter at least two names!"
+		document.getElementById("startGameErrorMessage").style.borderColor = "#303030";
+		document.getElementById("startGameErrorMessage").style.color = "white";
+		document.getElementById("startGameButton").style.background = "#303030";
+		allowGameStart = false;
+	} else {
+		//game can start!
+		allowGameStart = true;
+		document.getElementById("startGameErrorMessage").style.display = "none";
+		document.getElementById("startGameButton").style.background = "orange";
 	}
 }
 
@@ -56,17 +195,27 @@ function nameEntryChange(inputelement) {
 </head>
 <body onLoad="updateNameEntryArea()">
 <div class="AppArea">
-<div class="nameEntryArea" id="nameEntryArea"></div>
+<div class="nameEntryAreaWrapper" id="nameEntryAreaWrapper">
+	<div class="mainHeadline">YoHoHome</div>
+	<div class="instructionHeadline">Enter Player Names:</div>
+	<div class="nameEntryArea" id="nameEntryArea"></div>
+	<div class="startGameErrorMessage" id="startGameErrorMessage">Please enter at least two names!</div>
+	<div class="startGameButton" id="startGameButton" onclick="startGame()">START GAME</div>
 
-<div id="aboutHeadline" style="text-align: center;"><a onclick="toggleAbout(true)">About This App</a></div>
-<div style="display: none" id="aboutDiv"><br>
-This app was developed by Thomas Twenh&ouml;ven and is not associated with the creators of the base game.<br><br>
+</div>
 
-Am I storing any of your data? <br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close (or reload) the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
+
+<br><br>
+<div id="aboutHeadline" class="aboutHeadline" onclick="toggleAbout(true)">About This App (click)</div>
+<div class="aboutText" id="aboutDiv">This app was developed by Thomas Twenh&ouml;ven and is not associated with the creators of the base game.<br><br>
+
+Am I storing any of your data? <br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close or reload the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
 This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br><br>
 
 Image Credits:<br>
-<a href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a></div>
+<a target="_blank" href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a><br>
+<a target="_blank" href="https://icons8.com/icon/W9RS5YNuHAdG/done">Checkmark</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+</div>
 
 </div>
 <div id="emptyDiv" style="display: none;"></div>
