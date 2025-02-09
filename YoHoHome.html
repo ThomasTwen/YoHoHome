@@ -144,19 +144,25 @@ input:active, input:focus {
 	display: none;
 	font-size: 1.5em;
 	padding-top: 20px;
+	text-align: left;
+}
+.bidInstructionString {
 	text-align: center;
+	width: 100%;
 }
 .bidNameBox {
 	width: 100%;
 	background: #303030;
 	display: block;
+	text-align: center;
+	padding: 5px;
 }
 .bidButton {
 	display: inline-block;
 	border: 4px solid #303030;
 	border-radius: 5px;
 	color: orange;
-	padding: 10px 22px;
+	padding: 10px 24px;
 	margin: 10px;
 }
 .bidConfirmButton {
@@ -166,6 +172,7 @@ input:active, input:focus {
 	border-radius: 10px;
 	padding: 5px;
 	margin-inline: auto;
+	text-align: center;
 }
 .trickAreaWrapper {
 	display: none;
@@ -313,19 +320,19 @@ function showView(view) {
 		document.getElementById("bidAreaWrapper").style.display="block";
 		document.getElementById("leaderBoardAreaWrapper").style.display = "none";
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
-		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid orange";
+		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid #303030";
 	} else {
 		document.getElementById("bidAreaWrapper").style.display="none";
 		document.getElementById("trickAreaWrapper").style.display="none";
 		document.getElementById("leaderBoardAreaWrapper").style.display = "block";
-		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid orange";
+		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid #303030";
 		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid black";
 	}
 }
 function updateBidStructure() {
-	var myString = "Enter player bids:";
+	var myString = "<div class=\"bidInstructionString\">Enter player bids:</div>";
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin bidUserBox\"><span class=\"bidNameBox\">" + players[i] + "</span>";
+		myString += "<div class=\"playerBoxMargin bidUserBox\"><div style=\"display: none;\" id=\"playerIdField\">" + i + "</div><span class=\"bidNameBox\">" + players[i] + "</span>";
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"bidButton\" onclick=\"bidClick(this)\">" + j + "</div>";
 		}
@@ -335,7 +342,17 @@ function updateBidStructure() {
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
 }
 function bidClick(buttonElement) {
+	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
+	for (var i = 2; i < buttonElement.parentElement.children.length; i++) {
+		currentElement = buttonElement.parentElement.children[i];
+		currentElement.style.borderColor = "#303030";
+		currentElement.style.background = "black";
+		currentElement.style.color = "orange";
+	}
 	buttonElement.style.borderColor = "orange";
+	buttonElement.style.background = "orange";
+	buttonElement.style.color = "white";
+	//alert("Player ID "+buttonElement.parentElement.firstChild.textContent + " selected " + buttonElement.textContent);
 }
 function confirmBids() {
 	
