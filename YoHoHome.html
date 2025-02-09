@@ -46,6 +46,10 @@ a:visited {
 	margin: 10px 5px;
 	padding: 10px;
 }
+.playerBoxMargin {
+	margin: 10px 5px;
+	padding: 10px;
+}
 .nameEntry {
 	border-radius: 10px;
 	border: 2px solid #303030;
@@ -110,14 +114,15 @@ input:active, input:focus {
 }
 .gameAreaWrapper {
 	display: none;
+	color: orange;
 }
 .viewSelectorWrapper {
 	position: relative;
 }
 .viewSelectorLine {
 	position: absolute;
-	background-color: orange;
-	top: 40px; 
+	background-color: #303030;
+	top: 41px; 
 	left: 0;
 	height: 2px;
 	width: 100%;
@@ -126,17 +131,41 @@ input:active, input:focus {
 .viewSelectorButton {
 	position: relative;
 	display: inline-block;
-	color: orange;
-	border: 2px solid orange;
+	border: 2px solid #303030;
 	width: 180px;
-	padding: 5px;
+	padding: 10px;
 	border-radius: 5px 5px 0px 0px;
-	height: 28px;
 	z-index: 5;
 	background: black;
+	font-size: 0.7em;
+	vertical-align: middle;
 }
 .bidAreaWrapper {
 	display: none;
+	font-size: 1.5em;
+	padding-top: 20px;
+	text-align: center;
+}
+.bidNameBox {
+	width: 100%;
+	background: #303030;
+	display: block;
+}
+.bidButton {
+	display: inline-block;
+	border: 4px solid #303030;
+	border-radius: 5px;
+	color: orange;
+	padding: 10px 22px;
+	margin: 10px;
+}
+.bidConfirmButton {
+	color: white;
+	background: orange;
+	width: 70%;
+	border-radius: 10px;
+	padding: 5px;
+	margin-inline: auto;
 }
 .trickAreaWrapper {
 	display: none;
@@ -263,8 +292,11 @@ function startGame() {
 		//show the right divs
 		document.getElementById("nameEntryAreaWrapper").style.display = "none";
 		document.getElementById("gameAreaWrapper").style.display = "block";
+		document.getElementById("bidAreaWrapper").style.display = "block";
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
 		//build the bid structure
+		currentRound++;
+		updateBidStructure();
 	} else {
 		document.getElementById("startGameErrorMessage").style.display = "block";
 		document.getElementById("startGameErrorMessage").innerHTML ="Cant start game! Please enter at least two names and avoid duplicates"
@@ -289,6 +321,24 @@ function showView(view) {
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid orange";
 		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid black";
 	}
+}
+function updateBidStructure() {
+	var myString = "Enter player bids:";
+	for (var i = 0; i < players.length; i++) {
+		myString += "<div class=\"playerBoxMargin bidUserBox\"><span class=\"bidNameBox\">" + players[i] + "</span>";
+		for (var j = 0; j <= currentRound; j++) {
+			myString += "<div class=\"bidButton\" onclick=\"bidClick(this)\">" + j + "</div>";
+		}
+		myString += "</div>";
+	}
+	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
+	document.getElementById("bidAreaWrapper").innerHTML = myString;
+}
+function bidClick(buttonElement) {
+	buttonElement.style.borderColor = "orange";
+}
+function confirmBids() {
+	
 }
 </script>
 </head>
