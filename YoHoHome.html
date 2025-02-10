@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
 <title>YoHoHome</title>
-<link rel="icon" type="image/x-icon" href="data:image/spng;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAACqAAAAqgB7e92gQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAALXSURBVFiFvdfPa11FFAfwz2hqUVsbClr8EYjBhaKudKEtuFH3oishJcWFYBDBZOk2C3HzQEWJhSr+DNV/QcUfNK6r6EIMIqUGC1ZbqqVqj4s3t97c3Jm+J08HDndmzveec+acM2dmRISIgFvxBTax3MxPirCcZa9j5tJ8C/A8okVzE1Q+15G90uKZwQpOd0AHJ2jAfEf26axzZgpHcZ/t7YqeOZBSmsYs9uEkNiLiXAmPKzvjaTyHB+W4RA+tdlZxP9bwSwH/I97D3T0eWC38s8kwOfqYgQF24MUKpksX8QZ2ZuWDCnY5RYSU0hz2Z1ftx5Mtd53ALRX3ltrnOI7F1txrOIa/cCwiNkpJU7P639KgV1clc1/9r5VHRDnT8duYLi+1jyPi2RKzZsAjEzJgV42Zmmq0ZTKlq/C7uoGjtrMRcV2JWVJw/YSUw+6U0k3jGnB+QsqbdqHE+D9CcD4iri4xexVExAV81RaCb/CJYRHpa2fwIb61dcUnquZV6sArhnt4A9Ot+TsMz/T2Pv8Mu1qYm3Gq4VVPyooBT2UBBwrn+8XM/xN7ejCPZv77NQNqMb4nf7cVpIjYwNk8/CEifu35/2T+7qjo6PcAbjSMY+DlHv6hzFvPHug7gt/NmJ9x7VghwDO2xvhI9shDmXcOaxl7FN/jcdyOB/BR5/+nxzXgTZc/YGYz9rYRsB+UDJgqROZ1PIZrKtF7OKV0BnsrmKatFTmVXfDOCCsr0ZedcfE4HvVCMsB3IypfR+qTUTTA8IY7jwXbL5CDjHk7j08ZZn5TpJpa8FPuv1BZyGrWMe+fHLJUWc2gJWyx5Y1Pc78pNsfxUu4vXsabbVpi9Gv5nYbnwCEcxteYyl54C0/gD9zQE9Lqtbxb1xtaKJTg3diDu/LcAezL/XsLObVQyZfi02y+VsPHIRzsyL70NGuDVjqg2QkaUH6ctkAz2SWbWJqU8pb83uf531Pa0xJ0bGAIAAAAAElFTkSuQmCC"/>
+<link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAACqAAAAqgB7e92gQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAALXSURBVFiFvdfPa11FFAfwz2hqUVsbClr8EYjBhaKudKEtuFH3oishJcWFYBDBZOk2C3HzQEWJhSr+DNV/QcUfNK6r6EIMIqUGC1ZbqqVqj4s3t97c3Jm+J08HDndmzveec+acM2dmRISIgFvxBTax3MxPirCcZa9j5tJ8C/A8okVzE1Q+15G90uKZwQpOd0AHJ2jAfEf26axzZgpHcZ/t7YqeOZBSmsYs9uEkNiLiXAmPKzvjaTyHB+W4RA+tdlZxP9bwSwH/I97D3T0eWC38s8kwOfqYgQF24MUKpksX8QZ2ZuWDCnY5RYSU0hz2Z1ftx5Mtd53ALRX3ltrnOI7F1txrOIa/cCwiNkpJU7P639KgV1clc1/9r5VHRDnT8duYLi+1jyPi2RKzZsAjEzJgV42Zmmq0ZTKlq/C7uoGjtrMRcV2JWVJw/YSUw+6U0k3jGnB+QsqbdqHE+D9CcD4iri4xexVExAV81RaCb/CJYRHpa2fwIb61dcUnquZV6sArhnt4A9Ot+TsMz/T2Pv8Mu1qYm3Gq4VVPyooBT2UBBwrn+8XM/xN7ejCPZv77NQNqMb4nf7cVpIjYwNk8/CEifu35/2T+7qjo6PcAbjSMY+DlHv6hzFvPHug7gt/NmJ9x7VghwDO2xvhI9shDmXcOaxl7FN/jcdyOB/BR5/+nxzXgTZc/YGYz9rYRsB+UDJgqROZ1PIZrKtF7OKV0BnsrmKatFTmVXfDOCCsr0ZedcfE4HvVCMsB3IypfR+qTUTTA8IY7jwXbL5CDjHk7j08ZZn5TpJpa8FPuv1BZyGrWMe+fHLJUWc2gJWyx5Y1Pc78pNsfxUu4vXsabbVpi9Gv5nYbnwCEcxteYyl54C0/gD9zQE9Lqtbxb1xtaKJTg3diDu/LcAezL/XsLObVQyZfi02y+VsPHIRzsyL70NGuDVjqg2QkaUH6ctkAz2SWbWJqU8pb83uf531Pa0xJ0bGAIAAAAAElFTkSuQmCC"/>
 <style>
 body { 
 	background-color: #303030;
@@ -200,6 +199,7 @@ input:active, input:focus {
 	vertical-align: middle;
 	font-size: 1.5em;
 	margin-left: 10px;
+	vertical-align: middle;
 }
 .trickViewBidEditButtonMinus {
 	color: white;
@@ -210,17 +210,25 @@ input:active, input:focus {
 	vertical-align: middle;
 	font-size: 1.5em;
 	border-left: 1px solid #303030;
+	vertical-align: middle;
 }
 .trickPlayerColorBox {
 	width: 100%;
 	background: #303030;
 	display: block;
 	text-align: center;
+	vertical-align: middle;
 }
 .trickNameBox {
 	font-size: 1.5em;
 	display: inline;
-	border-radius: 5px;
+	vertical-align: middle;
+}
+.trickNameInfoBox {
+	font-size: 0.7em;
+	display: inline;
+	vertical-align: middle;
+	margin-left: 10px;
 }
 .trickConfirmButton {
 	color: white;
@@ -482,8 +490,8 @@ function updateTrickStructure(editMode) {
 		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Enter tricks won:</div>";
 	}
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\">" + players[i] + " (Bid: " + gameData[editingRound][i][0]+")</div>";
-		myString += "<div class=\"trickViewBidEditButtonPlus\" onclick=\"trickViewEditBidClick(" + i + ", \"+\")\">+</div><div class=\"trickViewBidEditButtonMinus\" onclick=\"trickViewEditBidClick(" + i + ", \"-\")\">-</div>";
+		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\">" + players[i] + "</div><div class=\"trickNameInfoBox\">(Bid: " + gameData[editingRound][i][0]+")</div>";
+		myString += "<div class=\"trickViewBidEditButtonPlus\" onclick=\"trickViewEditBidClick(" + i + ", \"+\")\">+</div><div class=\"trickViewBidEditButtonMinus\" onclick=\"trickViewEditBidClick(" + i + ", \"-\")\">-&ndash;&mdash;</div>";
 		myString += "</div>";
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"trickButton\" onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
@@ -530,8 +538,10 @@ Is this app storing any of your data? <br>No! This is a website with no permanen
 This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br><br>
 
 Image Credits:<br>
-<a target="_blank" href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a><br>
-<a target="_blank" href="https://icons8.com/icon/W9RS5YNuHAdG/done">Checkmark</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+<a target="_blank" href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a>, specifically <a href="https://www.flaticon.com/free-icon/human-skull-with-crossed-bones-silhouette_30428?term=bone+skull&page=1&position=1&origin=search&related_id=30428">this</a><br>
+<a target="_blank" href="https://icons8.com/icon/W9RS5YNuHAdG/done">Checkmark</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
+<a target="_blank" href="https://icons8.com/icon/bnngLiNhpnAZ/reduce">Minus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
+<a target="_blank" href="https://icons8.com/icon/sE8CuzuVQX3D/add-new">Plus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 </div>
 
 </div>
