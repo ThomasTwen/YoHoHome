@@ -141,12 +141,12 @@ input:active, input:focus {
 	font-size: 0.7em;
 	vertical-align: middle;
 }
-.bidAreaWrapper {
+.bidAreaWrapper, .trickAreaWrapper {
 	display: none;
 	padding-top: 20px;
 	text-align: left;
 }
-.bidInstructionString {
+.bidInstructionString, .trickInstructionString {
 	text-align: center;
 	width: 100%;
 	font-size: 1.5em;
@@ -159,7 +159,7 @@ input:active, input:focus {
 	padding: 5px;
 	font-size: 1.5em;
 }
-.bidButton {
+.bidButton, .trickButton {
 	display: inline-block;
 	border: 4px solid #303030;
 	border-radius: 5px;
@@ -168,7 +168,7 @@ input:active, input:focus {
 	margin: 10px;
 	font-size: 1.5em;
 }
-.bidEntryErrorMessage {
+.bidEntryErrorMessage, .trickEntryErrorMessage {
 	border-radius: 10px;
 	border: 2px solid red;
 	margin: 15px 10px;
@@ -191,8 +191,46 @@ input:active, input:focus {
 	border: 2px solid orange;
 	font-size: 1.5em;
 }
-.trickAreaWrapper {
-	display: none;
+.trickViewBidEditButtonPlus {
+	color: white;
+	border-radius: 5px 0px 0px 5px;
+	background: orange;
+	padding: 2px 15px;
+	display: inline;
+	vertical-align: middle;
+	font-size: 1.5em;
+	margin-left: 10px;
+}
+.trickViewBidEditButtonMinus {
+	color: white;
+	border-radius: 0px 5px 5px 0px;
+	background: orange;
+	padding: 2px 17px;
+	display: inline;
+	vertical-align: middle;
+	font-size: 1.5em;
+	border-left: 1px solid #303030;
+}
+.trickPlayerColorBox {
+	width: 100%;
+	background: #303030;
+	display: block;
+	text-align: center;
+}
+.trickNameBox {
+	font-size: 1.5em;
+	display: inline;
+	border-radius: 5px;
+}
+.trickConfirmButton {
+	color: white;
+	background: orange;
+	width: 45%;
+	border-radius: 10px;
+	padding: 5px;
+	text-align: center;
+	border: 2px solid orange;
+	font-size: 1.5em;
 }
 .leaderBoardAreaWrapper {
 	display: none;
@@ -210,7 +248,22 @@ var alliances = new Array();
 //round, player, player
 var currentRound = 0;
 var editingRound = 0;
+//toggle between bid (0) and trick (1) game views
 var currentGameView = 0;
+
+function sanitize(string) {
+	//copied this from somewhere
+	const map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#x27;',
+	    "/": '&#x2F;',
+	};
+	const reg = /[&<>"'/]/ig;
+	return string.replace(reg, (match)=>(map[match]));
+}
 function toggleAbout(changeTo) {
 	if (changeTo) {
 		document.getElementById("aboutDiv").style.display = "block";
@@ -318,7 +371,7 @@ function startGame() {
 		for (var i = 0; i < children.length; i++) {
 			//check if field is empty
   			if (children[i].children[1].value) {
-  				players[j] = children[i].children[1].value;
+  				players[j] = sanitize(children[i].children[1].value);
   				gameData[1][j] = [0, 0, 0, 0, 0];
   				j++;
   			}
@@ -343,9 +396,15 @@ function startGame() {
 function showView(view) {
 	//the user wants to switch between the game view and the leaderboard view
 	//0 is game, 1 is leaderboard
-	currentGameView = view;
+	//currentGameView distinguishes between the bid and trick areas, its a bit confusing
 	if (view == 0) {
-		document.getElementById("bidAreaWrapper").style.display="block";
+		if (currentGameView == 0) {
+			document.getElementById("bidAreaWrapper").style.display="block";
+			document.getElementById("trickAreaWrapper").style.display="none";
+		} else {
+			document.getElementById("trickAreaWrapper").style.display="block";
+			document.getElementById("bidAreaWrapper").style.display="none";
+		}
 		document.getElementById("leaderBoardAreaWrapper").style.display = "none";
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
 		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid #303030";
@@ -408,7 +467,37 @@ function confirmBids() {
 	if (forgottenPlayerExists) {
 		//the player has forgotten to set at least one bid, and we selected it for him
 		document.getElementById("bidEntryErrorMessage").style.display="block";
+	} else {
+		//Bids are finished, lets switch views!
+		//there are two different view variables to make things more complicated
+		currentGameView = 1;
+		showView(0);
+		updateTrickStructure();
 	}
+}
+function updateTrickStructure(editMode) {
+	if (editMode) {
+		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Edit tricks for round " + editingRound + ":</div>";
+	} else {
+		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Enter tricks won:</div>";
+	}
+	for (var i = 0; i < players.length; i++) {
+		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\">" + players[i] + " (Bid: " + gameData[editingRound][i][0]+")</div>";
+		myString += "<div class=\"trickViewBidEditButtonPlus\" onclick=\"trickViewEditBidClick(" + i + ", \"+\")\">+</div><div class=\"trickViewBidEditButtonMinus\" onclick=\"trickViewEditBidClick(" + i + ", \"-\")\">-</div>";
+		myString += "</div>";
+		for (var j = 0; j <= currentRound; j++) {
+			myString += "<div class=\"trickButton\" onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
+		}
+		myString += "</div>";
+	}
+	myString += "<div class=\"trickEntryErrorMessage\" id=\"trickEntryErrorMessage\">Missing tricks have been auto-filled to 0!</div><div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div>";
+	document.getElementById("trickAreaWrapper").innerHTML = myString;
+}
+function trickClick(buttonElement, playerID, trickValue) {
+	
+}
+function confirmTricks() {
+	
 }
 </script>
 </head>
