@@ -8,6 +8,7 @@
 body { 
 	background-color: #303030;
 	color: white;
+	font-size: 100%;
 }
 .AppArea {
 	background-color: black;
@@ -142,13 +143,13 @@ input:active, input:focus {
 }
 .bidAreaWrapper {
 	display: none;
-	font-size: 1.5em;
 	padding-top: 20px;
 	text-align: left;
 }
 .bidInstructionString {
 	text-align: center;
 	width: 100%;
+	font-size: 1.5em;
 }
 .bidNameBox {
 	width: 100%;
@@ -156,6 +157,7 @@ input:active, input:focus {
 	display: block;
 	text-align: center;
 	padding: 5px;
+	font-size: 1.5em;
 }
 .bidButton {
 	display: inline-block;
@@ -164,6 +166,19 @@ input:active, input:focus {
 	color: orange;
 	padding: 10px 24px;
 	margin: 10px;
+	font-size: 1.5em;
+}
+.bidEntryErrorMessage {
+	border-radius: 10px;
+	border: 2px solid red;
+	margin: 15px 10px;
+	color: red;
+	font-size: 0.7em;
+	padding: 15px 5px;
+	width: 70%;
+	margin-inline: auto;
+	text-align: center;
+	display: none;
 }
 .bidConfirmButton {
 	color: white;
@@ -173,6 +188,8 @@ input:active, input:focus {
 	padding: 5px;
 	margin-inline: auto;
 	text-align: center;
+	border: 2px solid orange;
+	font-size: 1.5em;
 }
 .trickAreaWrapper {
 	display: none;
@@ -184,10 +201,15 @@ input:active, input:focus {
 </style>
 <script type="text/javascript">
 var allowGameStart = false;
-var players = [];
-var totalscores = [];
-var gameData = [];
+var players = new Array();
+var totalscores = new Array();
+var gameData = new Array();
+// first round, then player
+// bid - trick - +10, +20, mermaid, pirate, king
+var alliances = new Array();
+//round, player, player
 var currentRound = 0;
+var editingRound = 0;
 var currentGameView = 0;
 function toggleAbout(changeTo) {
 	if (changeTo) {
@@ -289,11 +311,16 @@ function startGame() {
 	}
 	if(existingNames >= 2 && !nameDouble) {
 		//Lets start
+		//initialize array for round 1
+		gameData[1] = new Array();
 		//populate players array
+		var j = 0;
 		for (var i = 0; i < children.length; i++) {
 			//check if field is empty
   			if (children[i].children[1].value) {
-  				players[i] = children[i].children[1].value
+  				players[j] = children[i].children[1].value;
+  				gameData[1][j] = [0, 0, 0, 0, 0];
+  				j++;
   			}
 		}
 		//show the right divs
@@ -303,6 +330,7 @@ function startGame() {
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
 		//build the bid structure
 		currentRound++;
+		editingRound++;
 		updateBidStructure();
 	} else {
 		document.getElementById("startGameErrorMessage").style.display = "block";
@@ -338,7 +366,7 @@ function updateBidStructure() {
 		}
 		myString += "</div>";
 	}
-	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
+	myString += "<div class=\"bidEntryErrorMessage\" id=\"bidEntryErrorMessage\">Missing bids have been auto-filled to 0!</div><div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
 }
 function bidClick(buttonElement, playerId, bidValue) {
@@ -353,10 +381,34 @@ function bidClick(buttonElement, playerId, bidValue) {
 	buttonElement.style.background = "orange";
 	buttonElement.style.color = "white";
 	//write values into the data structure
+	gameData[editingRound][playerId][0] = bidValue;
 	//alert("Clicked player" + playerId + " and value " + bidValue);
 }
 function confirmBids() {
-	
+	//loop over all players to get their results; identify if all have been filled out
+	var forgottenPlayerExists = false;
+	for (var i = 0; i < players.length; i++) {
+		//we are now checking player i, is there anything selected for them
+		myEl = document.getElementById("bidAreaWrapper").children[i+1];
+		var selectedBoxExists = false;
+		for (var j = 0; j < editingRound+1; j++) {
+			if (myEl.children[j+1].style.color == "white") {
+				selectedBoxExists = true;
+			}
+		}
+		if (!selectedBoxExists) {
+			//The player has forgotten a guy, lets remember that for setting up the warning message
+			forgottenPlayerExists = true;
+			//auto-select the 0 in red for him
+			myEl.children[1].style.color = "white";
+			myEl.children[1].style.borderColor = "red";
+			myEl.children[1].style.background = "red";
+		}
+	}
+	if (forgottenPlayerExists) {
+		//the player has forgotten to set at least one bid, and we selected it for him
+		document.getElementById("bidEntryErrorMessage").style.display="block";
+	}
 }
 </script>
 </head>
