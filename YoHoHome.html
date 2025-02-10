@@ -332,18 +332,18 @@ function showView(view) {
 function updateBidStructure() {
 	var myString = "<div class=\"bidInstructionString\">Enter player bids:</div>";
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin bidUserBox\"><div style=\"display: none;\" id=\"playerIdField\">" + i + "</div><span class=\"bidNameBox\">" + players[i] + "</span>";
+		myString += "<div class=\"playerBoxMargin bidUserBox\"><span class=\"bidNameBox\">" + players[i] + "</span>";
 		for (var j = 0; j <= currentRound; j++) {
-			myString += "<div class=\"bidButton\" onclick=\"bidClick(this)\">" + j + "</div>";
+			myString += "<div class=\"bidButton\" onclick=\"bidClick(this," + i + ", " + j + ")\">" + j + "</div>";
 		}
 		myString += "</div>";
 	}
 	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
 }
-function bidClick(buttonElement) {
+function bidClick(buttonElement, playerId, bidValue) {
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
-	for (var i = 2; i < buttonElement.parentElement.children.length; i++) {
+	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
 		currentElement.style.borderColor = "#303030";
 		currentElement.style.background = "black";
@@ -352,7 +352,8 @@ function bidClick(buttonElement) {
 	buttonElement.style.borderColor = "orange";
 	buttonElement.style.background = "orange";
 	buttonElement.style.color = "white";
-	//alert("Player ID "+buttonElement.parentElement.firstChild.textContent + " selected " + buttonElement.textContent);
+	//write values into the data structure
+	//alert("Clicked player" + playerId + " and value " + bidValue);
 }
 function confirmBids() {
 	
