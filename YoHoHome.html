@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
@@ -190,33 +191,12 @@ input:active, input:focus {
 	border: 2px solid orange;
 	font-size: 1.5em;
 }
-.trickViewBidEditButtonPlus {
-	color: white;
-	border-radius: 5px 0px 0px 5px;
-	background: orange;
-	padding: 2px 15px;
-	display: inline;
-	vertical-align: middle;
-	font-size: 1.5em;
-	margin-left: 10px;
-	vertical-align: middle;
-}
-.trickViewBidEditButtonMinus {
-	color: white;
-	border-radius: 0px 5px 5px 0px;
-	background: orange;
-	padding: 2px 17px;
-	display: inline;
-	vertical-align: middle;
-	font-size: 1.5em;
-	border-left: 1px solid #303030;
-	vertical-align: middle;
-}
 .trickPlayerColorBox {
 	width: 100%;
 	background: #303030;
 	display: block;
 	text-align: center;
+	padding: 5px;
 	vertical-align: middle;
 }
 .trickNameBox {
@@ -225,10 +205,15 @@ input:active, input:focus {
 	vertical-align: middle;
 }
 .trickNameInfoBox {
-	font-size: 0.7em;
+	font-size: 1.5em;
 	display: inline;
-	vertical-align: middle;
 	margin-left: 10px;
+	vertical-align: middle;
+}
+.trickViewBidEditButton {
+	display: none;
+	position: relative;
+	top: 3.5px;
 }
 .trickConfirmButton {
 	color: white;
@@ -258,7 +243,8 @@ var currentRound = 0;
 var editingRound = 0;
 //toggle between bid (0) and trick (1) game views
 var currentGameView = 0;
-
+var minusIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABUElEQVR4nO2WTU7DMBCFn+gF6G16BeAWLYegsOAE/GyRECwyE1VR2aCyokdgDdtWAq4Aqz40TgIU1W5KY8KiI42UxJ58npdYfsAmmg5maDFBhwm6VBxScE7FBRWZS8Gdy/I+Hztzc63GajO0VoOm2KPilQqulYIXKnarQwWztaFf8NlSuJM3XyVrzmceY8sPtu9SPzTPBB0/WLEfDSzohcBHEcF9PzjfMnHAitMQ+Coi+DIETiNKLaFvfOMpfKNiQsEjFQ9U3FNw69Ku7Vk+NinmLgIPQx2Pfkx+5zW2vQX+Btqudv5do9XAinZ8sAalnlLwVEg9/ib1uJDaxqa/lTpt5ueSpraTuvM0VscnoY77ETs+CIF70cAJuv/wWMwaMgIWZlNqtz6CHVQJB7dV1tFpVWgZJs2cvc23mlnYwQJ7O/i0t7YzSnu7TN5N4A/iA7eHO5DCbuIiAAAAAElFTkSuQmCC";
+var plusIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABc0lEQVR4nO2WS07DQAyGf+gBCkegXKJXAG7RcggKC07AY4uEQCLjUI1gV85C2AMS4QQIVCPPNBAiMnWUQLqoJUt9zO9v7BknBpbWtrFFhyP0OcKACftscMqEMyZY5wZ3zrPv/r8Tt1Y0orXoVIPG2GHCMxO4lhs8MWFbDzWY1oZ+w6dz4a68fpfcsD/yIVbLwXIuzUO9R+iXgwm76kBX2GBCr0LJhyHwgTqQRZcvsVYBPCoH+5bRBHlnxopz+ayDH4fAF8ogLzlNqtSch8CxMuP73PEkSo0JnfFtQPgxyy6RyhSqJL+lbk25/iaU8aSw+M3dXItuqagYQy6daLw2H2uygGBqr9Sx8oYmOc1D/ctllO1kkOY0r/Xbidz79G8eIAZHoYxHyt3z7HG5rl5P2AuBhxUC9fgam+r1EQYL+Fq0LQ0CYjKmND76GGxBYw4uu2wiUy00MynNj/HWt5qMsONfxtvx13grnZGNt/PKuzT8g30CLtEaEMMnXGIAAAAASUVORK5CYII=";
 function sanitize(string) {
 	//copied this from somewhere
 	const map = {
@@ -280,7 +266,7 @@ function toggleAbout(changeTo) {
 	} else {
 		document.getElementById("aboutDiv").style.display = "none";
 		document.getElementById("aboutHeadline").setAttribute("onclick", "toggleAbout(true)");
-		document.getElementById("aboutHeadline").innerHTML = "About This App (click)"
+		document.getElementById("aboutHeadline").innerHTML = "About This App (show)"
 	}
 }
 var nameEntryString = "<div class=\"nameEntry\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADUUlEQVR4nO3cO2gVQRTG8YlPUEFBsfDR+AQRtREsBEE70UZEsFBEIYU2YmOqYGGhdhIQBBG0EjSVIIqCqCCIElIEtdI0Por4SopANPcvIxtMJCbZmbl3Zme/X5/L2f12Z5fZc2KMiIiIiIiIiIiIiIiIiIgEBCwE5oT8TfEL4zFwB5jr+jsSNowxCiWhMBRKgmEolATDUCgJhqFQEgzDegbMa3pxdYNbGP3A8ti1Zwe3MIaALbFrzw5uYTSAQ7Frzw5uYVidsWvPDu5hdANtsevPCu5h9Nq/jV1/VnAPYwBYE7v+rOAexgiwK3b9WcE9DKs9dv1ZwS+My7Hrzwp+YTzSV8J0wngHLAtZT63hF8YgsDn2MWQDvzBGgf2xjyEb+IVhdcQ+hmzgH8ZtbYukE0YPsCBUPbWGfxifgFWxjyML+IcxDOwwqQHWAsdMhQCLim/aPo6a1ADzgVfj9vuXmvzvDOuSSRHQxUSfgb0m7zAeALNNaoCDU3w3vpramwdhwngLLDGJPje+T1N8H7DN5BPGD2CTSfy5MZM3kbPArIqH8SvZpRg46bjurqjo25R1xqTKDp4AdynvG3C4YneGdcOkzvakAvdxc9NeuRUJ47ldok0V2Lco4Knjgb4HdiYexgdgpakSYDHw0vGAfwIXQs7eES4M+zKy3VSR/VxZvOK6egGsTyiMRiufdU1hW+uBNx4nYdCnZYZwYVjnTQ6A1cWzwUfp/TDChnEvyW0RV8A64KPnSZnxfhhhw3htn4kmN8DG4qT6aEy3HxY4jC/2YjK5ArYCXwOcqL7J9sMCh2Hf9nab3NmvacX4lq/h8fthgcOwTpm6sFdecUJDeAhsCBzGdVM3wL6iLT+EBuE8qe0/hAEOFGt1KvprP5YMHCnaLWMb0ljy3zvleOBlpyyNJU+yfJ0mns5WL9eVAJyLEEa3+m+nDuViC8Po1Vjy9HdJG3ClBWEMaCy5XCjXmhjGiMaSS7Lb3cCtJgXSXrYe8etkmYrGkiN2svxLY8kJdLKM0VhyQp0sgxpLTqeTZVRjyWl1snQ0sx4xpTpZNJacUCdLT2rDQdnj/50sGktOqJNlOMmx5DphYifLidj1iPkTyp5s+m9FRERERERERERExOTvNx4w2r5e+WKBAAAAAElFTkSuQmCC\"";
@@ -436,7 +422,7 @@ function updateBidStructure() {
 	myString += "<div class=\"bidEntryErrorMessage\" id=\"bidEntryErrorMessage\">Missing bids have been auto-filled to 0!</div><div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
 }
-function bidClick(buttonElement, playerId, bidValue) {
+function bidClick(buttonElement, playerID, bidValue) {
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
@@ -448,7 +434,7 @@ function bidClick(buttonElement, playerId, bidValue) {
 	buttonElement.style.background = "orange";
 	buttonElement.style.color = "white";
 	//write values into the data structure
-	gameData[editingRound][playerId][0] = bidValue;
+	gameData[editingRound][playerID][0] = bidValue;
 	//alert("Clicked player" + playerId + " and value " + bidValue);
 }
 function confirmBids() {
@@ -490,8 +476,8 @@ function updateTrickStructure(editMode) {
 		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Enter tricks won:</div>";
 	}
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\">" + players[i] + "</div><div class=\"trickNameInfoBox\">(Bid: " + gameData[editingRound][i][0]+")</div>";
-		myString += "<div class=\"trickViewBidEditButtonPlus\" onclick=\"trickViewEditBidClick(" + i + ", \"+\")\">+</div><div class=\"trickViewBidEditButtonMinus\" onclick=\"trickViewEditBidClick(" + i + ", \"-\")\">-&ndash;&mdash;</div>";
+		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\" onclick=\"showBidEdit(true)\">" + players[i] + "</div><div class=\"trickNameInfoBox\">(Bid: <div class=\"trickViewBidEditButton\"><img onclick=\"trickViewEditBidClick(this, " + i + ", 0)\" src=\"" + minusIconBase64 + "\"/>&nbsp;</div><span>" + gameData[editingRound][i][0] + "</span>";
+		myString += "<div class=\"trickViewBidEditButton\">&nbsp;<img onclick=\"trickViewEditBidClick(this, " + i + ", 1)\" src=\"" + plusIconBase64 + "\"/></div>)</div>";
 		myString += "</div>";
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"trickButton\" onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
@@ -501,10 +487,55 @@ function updateTrickStructure(editMode) {
 	myString += "<div class=\"trickEntryErrorMessage\" id=\"trickEntryErrorMessage\">Missing tricks have been auto-filled to 0!</div><div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div>";
 	document.getElementById("trickAreaWrapper").innerHTML = myString;
 }
+function showBidEdit(switcher) {
+	var elements = document.getElementsByClassName('trickViewBidEditButton');
+	for (var i = 0; i < elements.length; i++) {
+		if (switcher) {
+			elements[i].style.display="inline";
+			elements[i].parentElement.parentElement.firstChild.setAttribute("onclick", "showBidEdit(false)");
+		} else {
+			elements[i].style.display="none";
+			elements[i].parentElement.parentElement.firstChild.setAttribute("onclick", "showBidEdit(true)");
+		}
+	}
+}
+function trickViewEditBidClick(buttonElement, playerID, direction) {
+	if (direction == 1) {
+		//user clicked a plus button
+		gameData[editingRound][playerID][0]++;
+	} else if (direction == 0){
+		//user clicked a minus button
+		gameData[editingRound][playerID][0]--;
+	} else {
+		alert("I misconfigured the bid edit buttons")
+	}
+	//lets see we maintain the upper and lower bounds for the bids
+	if (gameData[editingRound][playerID][0] < 0) {
+		gameData[editingRound][playerID][0] = 0;
+	} else if (gameData[editingRound][playerID][0] > editingRound) {
+		gameData[editingRound][playerID][0] = editingRound;
+	}
+	buttonElement.parentElement.parentElement.children[1].innerHTML = gameData[editingRound][playerID][0];
+}
+
 function trickClick(buttonElement, playerID, trickValue) {
-	
+	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
+	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
+		currentElement = buttonElement.parentElement.children[i];
+		currentElement.style.borderColor = "#303030";
+		currentElement.style.background = "black";
+		currentElement.style.color = "orange";
+	}
+	buttonElement.style.borderColor = "orange";
+	buttonElement.style.background = "orange";
+	buttonElement.style.color = "white";
+	//write values into the data structure
+	gameData[editingRound][playerID][1] = trickValue;
 }
 function confirmTricks() {
+	
+}
+function backButton() {
 	
 }
 </script>
@@ -530,7 +561,7 @@ function confirmTricks() {
 </div>
 
 <br><br>
-<div id="aboutHeadline" class="aboutHeadline" onclick="toggleAbout(true)">About This App (click)</div>
+<div id="aboutHeadline" class="aboutHeadline" onclick="toggleAbout(true)">About This App (show)</div>
 <div class="aboutText" id="aboutDiv">This app was developed by Thomas Twenh&ouml;ven and 
 is not associated with the creators of the base game.<br><br>
 
