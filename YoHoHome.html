@@ -226,28 +226,65 @@ input:active, input:focus {
 }
 .trickSpecialThirdArea {
 	width: 33%;
-	display: flex;
 	color: white;
-	justify-content: center;
-	align-items: top;
+	text-align: center;
 }
-.trickSpecialTierOneButton{
-	margin: 5px;
+
+.trickSpecialTierOneArea {
 	border-radius: 5px;
 	width: 80%;
+	margin-inline: auto;
+	display: flex;
+	justify-content: center;
+}
+.trickSpecialTierOneButton{
+	border-radius: 5px;
+	width: 100%;
 	height: 49px;
 	padding: 5px;
 	display: flex;
-	align-items: center;
 	justify-content: center;
-}
-.trickSpecialTierTwoCaptureButton {
-	border-radius: 5px;
-	margin: 5px;
-	padding: 5px;
-	background: darkblue;
+	align-items: center;
 }
 
+.trickSpecialTierTwoArea {
+	border-radius: 5px;
+	width: 80%;
+	padding: 2px;
+	display: none;
+	margin-inline: auto;
+	justify-content: space-between;
+}
+
+.trickSpecialLootArea {
+	display: flex;
+	flex-direction: column;
+	padding-top: 3px;
+	width: 100%;
+}
+
+.trickSpecialTierTwoCaptureButtonImg {
+	border-radius: 5px;
+	background: darkblue;
+	padding: 5px;
+}
+.trickSpecialTierTwoCaptureButtonText {
+	border-radius: 5px;
+	background: purple;
+	padding: 5px;
+	width: 40%;
+}
+.trickSpecialTierTwoCaptureButtonLoot {
+	border-radius: 5px;
+	background: orange;
+	padding: 5px;
+	width: 90%;
+	text-align: center;
+	margin-bottom: 5px;
+}
+.trickPlayerSpecialTextBox {
+	font-size: 0.7em;
+}
 .trickButtonArea {
 	display: flex;
 	justify-content: center;
@@ -277,6 +314,7 @@ input:active, input:focus {
 	display: none;
 }
 
+
 </style>
 <script type="text/javascript">
 var allowGameStart = false;
@@ -286,7 +324,7 @@ var gameData = new Array();
 // first round, then player
 // bid - trick - +10, +20, mermaid, pirate, king
 var alliances = new Array();
-//round, player, player
+//list of arrays, round, player, player
 var currentRound = 0;
 var editingRound = 0;
 //toggle between bid (0) and trick (1) game views
@@ -296,7 +334,9 @@ var plusIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYA
 var handcuffIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAACbklEQVR4nNXXy4vOYRQHcGMyLkPulwU1Y1DGLKSUyL/AykpRSslqZmFFkhoWiNjYCAsRpRQL15VIdi4zGHJtMuPSWMil4aOnnpen3/zed97LUE699XbO+Z7vec7znOc5v1Gj/jfBLExH3b8gW4WzeI+e+OuLuhV/g3AMjuI+1mF8YhsfdQ9wJPiOFGkdzuAkGkr4jY0+p0ak/NiMy6gvw7ceV7CpVtJ6vMDCCjCL8ByjayFejWtV4G5gZS3EW9FZBW4vttRCvBMdVeA6ArYW4l1orwLXHrDVkjbiOi6EVqkANzZiAraxGuINOI1LWFMBbg0uxt7fUCnpuXgtfsQA+nGsDNyx6DsQsSHGuUqIuw2V22XgbufguqshPoTjVRCfwMGKiDERb5IA5+P/R6UOC8YlCZ+PWDHW5OFIl+CJ4hKewQU5uPm4VwL3Cm3FSKfgaQbQhccZXUhsYoKbkEP6OK7+Z6J7HQaHPOLOxOkhWhPbsnjxF2R7YtuW6J8F38TWGpMvyL484sK+fsfiHPvSZAVdiT4MAKJteQ6uBYPRpzdrDOUqyN0yTvuPwqSBb1HXU2abTU8N0xJD0bbJrK4hjkSDw7UNbibxZ2SNL6PhK5pywIuTUv9eXXKwBvNOLubF7QvSn5fV/rTcmJuZKgqrDbI7se1I9MGnJbE1xVgFOZxHHMr9Njp8QDMO4E6yj2JlpmResTAeBfkcxiTswS18SXB9mFNsL9oieXgkNhoqb4qUsyUmdBVrc3Dv8k58NshUrI9JfIrA3tCDoSolcJNiss3xVRJfqjBrzy5JmhMstNnMikB/7u3wifP3P28qlV+9IsuvpOCvTQAAAABJRU5ErkJggg==";
 var coinsIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABbUlEQVR4nO3W30pVQRQG8FH0XkwlHyXEmxQis6sufA8DNaxH8s+VggmRR/MZurJACkTNK0kLfrFhHdghnj3bvQ8i+MFmMTOL+fZ838yaSekRDwmYwCI6OMbviJ3on+gH6Swu9MYvPG+b+HtMvoYXGMdgxKK9HuNHTWW8wg8cYKW0qg28jPyhiHPY7Ca0LWM2Uh9kFKvfDzWuI+6XVUk1iLNlxMAtcww0Ic7BFubxFMMRi/Z2E+JKGXOQ7kBcKWNjj/EEq/hcmvQEn7AUG2sSr8syNvIY0w2Oz909xtcax2cHb+v8WcrwNKsKteaxeljGYal9ii94j7G6Hrd1fIrb6BUWsNvtbOv45OyD/5AyiCt3aGYZ/VjegKkljyvRL49XMnLexKoLfGvL45ycLs7xLOf+zfG4KucyVluU2ZFbSYN4JvPhVny9cIapnmQ93lh78cb6E8WhE8VhPHI+hKfF2F/8jPY7jN6Y+BHpnvAPwP+tyWuXh2EAAAAASUVORK5CYII=";
 var mermaidIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAADZklEQVR4nM3Wa8jfYxgH8OfZaA+2aU5hs7ZRiCVmjklmshJzWjGHmNMcc5x5gbU2h71wzCFGFBHlGDkurI2cJcQM2xxyaF7hDX108X3q13//h2fP/0nu+tV93133/f1d1/W9vvfV1fV/HdgEp+JGXIl9/wvQ0fgE9+GyfG/iZezQxn4rdA8G8HM4G5fi18yH4gSswpxaN+zfK9tOQcfjK5yBD7AnHsVKjMQWeBDv4HTMx0dYjXGdAE/HPZiLyxv732KjxvpA3BTgbbAAF3UCPBsLsR+WZm8y3mjYHIZjW85dgnmdAM/AvUUWPINH8BmmNWzG4m1slvWGeAtTOgEem7CW17fgG7yKa3EaRjVst8YXeB2/4P3ixkBAu/Eknqp84czGVym4PT9VuR2fM5vjHPyEJRg2EOCz8CxGYFf0tHi3W3mccirmvxJ2r4rIDBuoaHxdJZELa/59wr00QFXTn+PClNVJCe9rvREYCPATOD9i8TMW42j8Hq+qZH7ARNyWkN+KHYvNuHmgTF4eb9eULuOPKiHsjisC+ljjzKa4GCvyE1PXF3RUcrRLpLKI1IPvWuyOwx193DE8zJ67PsDXRHVOwUthdoXvN0yKTe3dVcTr4445Sc2n2Km/wPNSp6saJfJweRf9nVT5w/PR7n3a3PEiDkgJLuwv8AaRwAmNuizRGJbL1ga0J1FZ3OaOitQeSdeyfgHXwN44JCE9HA9gS2wccvU03t0VXS0j7/Yx9YhESHZuakCfI4fuj3DMTt6vw6w2tmvb7J1XPMm8XrZlqYIXypF/a3PGxeNZyWl1Hee22NVj8GOb8/V2L2rZq8ZhSsq0PdtTj1UO2+JIPJSDQ1vsSkaXtwGoej8UV+HdNA7z40CRduY/ed0dj6oD+TDkerrZS0Vo7m6sRyS0j2P/nCvpnYoLkrbR/dHpvzoIfJnQF5unN+xOTBN4Z6lYiQyuD6mqGZyWBmJGn2CtoxjcmNdLc0M6j5W9nWWJQ8rr+FTB8OxfXenJfEIitd06IO1GLq1XZq80dSsTviOKaA27iS3nTsbH0e6ZOKpfgL0joT2opbbXJK/r9MwRlAXpMMdgCLZPCoZ0dTL8LQRL4tGidBqzw9bV0e+Rsa13eXJHgF3tf6BYWuAlLNV7jWmxKT4cPKjAgzn+BL/3YuOEs6UXAAAAAElFTkSuQmCC";
+var fishyMermaidIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAADjElEQVR4nK2WXUzPYRTH/4UmNiRsYi64ZGHZuMoiQ9lMF7S5oS4sbcS68BYbwiKvMdNSNBcuYl7nrZVpo1kYE3mJjRXdeAshPnby/fP3+Nf/909ne/b8nvOcc77P7zznnOf4gPlAC/AQiPd5JCADuAW85RfZXAcs9mqgBdgJVAIVHnVygU/AJmAOkKx5s/grvRipF+hj4KAH+f5Aq/tnwAJguDzxAegXytA44DhwABjsAXi2/ipXY6YdGPgOlIv32fgh/9olIA4oAFYBfZ29pcAdoBRo1N1e1QFKNe4CWb5wCbgh5VfADmcvT0AdIM6eH9j287oD/AZYDZwETjt7u4EzAihz9srEPwvs6g5wDtCuA0x19soFsBZ4ZAEl/kjgiQ581EbYwEbAACDK55DAVgKjgAbgB/BauWzAYxRgDb6eImCWojceuK8AnAqkA4lAofgTJJfSE6CJcv8W4JAiOkZ7SZpjxLf02ibw6eGADArC6wNMBHoD3xRAk4D1crNFe4L4XyQ3qZPr6t8ZcDPwVKc2Y4OBjcA7VaZa/pCV3D2a/XQdWCL5jdJPkD2z29QZ8EIFTavmdrnQQIfJ7f6Ui5BOBLBG/CmSy5Beu2NvYVfuzldVshKZohMXq1weA84BRY5OkfiHJVcsvRTZMXv5oe45EjhhbgFq5MIqIA2IlpFMRydD/GjJmTzSb5K9yC6BZSgKWKFI/v1WA6nAR2BgkNw3fmoAL176OcECLSwCShTZF6yWK2gKtTZ+iRcjY/WQJ+s7UuMvvqNjrjsCbAdOAZc1F4hf4wW4LSAN/PdY7fDaHJ2HSpfRQLZ42Vob/4EX4BfKw14q9I3KtRHi7bX67OhUqWu5CHwF1mk+L16lF+AkRaId4IqKR7O+XyovkxydFQHRug+4p9kf/TmOfKw/311wqyyZij57T/1k9xUbRD5W7c00hz9N/A4dxUqFbD2wotKVByJ0xz/kPgug6CByl9SdDgKuabb1xQAZe6WMZgDPgeVeGkBLi606qXWg8wLdper1PqBu12pdHCAzVGWyWj8RugHU6TuePmCD4qBe31mqRKcUmKmSt1dpmWNnsmTSQ4IGVCEzvl/rGMVAnfrmcpXGjmuQRyw14zwBdEW6G//jn6bWJkqeWKRxU0XmTbc6S1/n4HNl1IaRvTpGdmc27C+t07DD/Zsy/wk+RF2l9cvPBGYN3m3d3/hwjf4EOWaK5KJ8WkMAAAAASUVORK5CYII=";
 var crownIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABuUlEQVR4nO3UO2sVYRAG4BPMsfIW0MIyEIWUIaRQEGy8oaKWFtGo4B9Ip4UINiqItl5+QSBgZx+jICksvKA2FoJ3S0ULHxky0UPcs2cPbJYUGRhY5pt535n3m/1arTVbzYY2jqS3mySdx6f0h42QW5wyCDdiEz7jcBPEh/AVQ+lfcLApqRfwMad90pTUQ0l4A7fwPiRf8S3FTTzFOgziGa72ja+PLcUofmFvR2wffmKkhHT+P/x+thQPMFMQvx/epaYY37+DCG7OjT3RBeAHhgvORnLq/QVnJxNzS+L/JW7n+EtSfM/Ei9FlFq/HK1wpmipzruH50jVhey5fNPstCcPnlt/z0ex6D07hdf6jF3AJ77ChhDgU+4DLuYAxwKNQAbsTu3h58RjT+R0bexpvLNpkN9KO+nOZGzgHOuLTESsrvI7ZZbFoYBcGehFn/mhBbDawy4qO5z1XIqnYyEC+csfKkrbiN3bUSLwzMbf1SnyJMzUSn8WLKol3cLdG4nu4XSVxCm9xviYPrKkqxBP5SyzU5GETVYjHI7Oylr3xwsZXNfHYCkg9VoV4MN/qupZrMjBrEnDNWn3bH0q02PZtWYBOAAAAAElFTkSuQmCC";
+var thickCrownIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABe0lEQVR4nO2UvUoDQRSFN0awEQubgGysBAUL6wQLX8BO8wDpFLRIY2meIGqRF7CMadUirb9FKjsLm4AaEBFEjVp8MnAXh8k4ju6SpMgHl5C7554zOztMEAwZdIBpVf0IfZPK9jI4BF6kwl4GZ4FH4BmYifsGJZ/VA6PACd+cqt6/MoC6mBx4GGzTTdljrt6VAawD78ATUAWWgLRlOA98isGVFNLLW/Rp8aqKt8pYM0VTxls8APvAsmzvOHAtzzrAAjAPvErvBpgARoBFYA+4NTzDn7ajhZ07oKn939BmNrV+U7Q2Wq7vUBPRB3AsvyaHQEqbSQFHFl3kobZXUXMFq1MXoS6JSaCoLeIeyFjmMkBbCyvKrPKIKLmCc5qwYDxTRrOO2TmlMXoFzS/nCh6Tg6PYCWIC7IpXR3n/Jj4X8UUCwZfideYjrmir3IpZ0e5VfIJXSZ4Vn2DzIkmC0PfbeN/BDo9yZPKXob4HN2IcrEac4EQY/OAhQ4IE+AKQjYosQTL09wAAAABJRU5ErkJggg==";
 var pirateIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAACU0lEQVR4nO3WW4iNURQH8OOSPGFiMEqKEEneiGLkkiSFInmQy6QUyqRBFFFehOQSD5JIHpRCFOXyIi8otwfkEiV3JUL8tLNOdqeZcY4zyoN/rYdv3f7f2nvttXeh8B//ItAd63AJ9/AAN7API/4WaT1eahnfsBHt2pJ0Cj7gO3ZjMMZgJPpjZdgT9qBjNWQ1mIpD+BpJV4RtUFSYZGDohuF5+F3DEgyohLAzTkd1RbzF/MynZyz7C9Rm+r64XLIFV9CtHOJlEfAkql1YGoij2BBysJkco7AVtyLX+nKIt4TzhlZ80jIW0dCKXzoBCTvKIR6WNUpjCz4XcT3kQgs+jZEj5Rr+W+IIGpuRN0Xn5pKO1pCQ+mbsTRnpuLJIM/KzqseZikgTcCKCr+JcK/IsI/oYuhSTcKJQKfyqeFQrPn2yLSlienR1wtlKSddGYDqrdaFLe/c05nSH0M1uZnl3xQ+9iu+1lRC/jWWry3TTItHX4rmOE5APmoSlYauLHG8qIX4c43AmuoSuPRZgYonvKnyKHziCTikGcyPHo0qIF2WV3ClzzNZk33ciNuVYWDZxBKfzeT8STCqxDcVyLEbXEtuEiHmYclREWgQ2Z3t3EjNipH7J9OmimIfJOJXpdxb+FH5W3RzeYU28PEqbq4g51RB3wutIvhp7sQn9Mp/xOBw3VgPeR1P1+mPiBGyLCg4UymvKhPOFaoHaGBwJx+MZ1Cs6OUnvdBFgOz7H/o+umjjr4pt+jzdpmhXaEuiIWdgfz5vbuBtPm2PxcunRpqT/UWgD/AD0KbNNVf2R3QAAAABJRU5ErkJggg==";
 function sanitize(string) {
 	//copied this from somewhere
@@ -419,7 +459,7 @@ function startGame() {
 			//check if field is empty
   			if (children[i].children[1].value) {
   				players[j] = sanitize(children[i].children[1].value);
-  				gameData[1][j] = [0, 0, 0, 0, 0];
+  				gameData[1][j] = [0, 0, 0, 0, 0, 0, 0];
   				j++;
   			}
 		}
@@ -532,23 +572,66 @@ function updateTrickStructure(editMode) {
 		myString += "<div class=\"playerBoxMargin trickUserBox\"><div class=\"trickPlayerColorBox\"><div class=\"trickNameBox\" onclick=\"showBidEdit(true)\">" + players[i] + "</div><div class=\"trickNameInfoBox\">Bid:&nbsp;<div class=\"trickViewBidEditButton\"><img onclick=\"trickViewEditBidClick(this, " + i + ", 0)\" src=\"" + minusIconBase64 + "\"/>&nbsp;</div><span>" + gameData[editingRound][i][0] + "</span>";
 		myString += "<div class=\"trickViewBidEditButton\">&nbsp;<img onclick=\"trickViewEditBidClick(this, " + i + ", 1)\" src=\"" + plusIconBase64 + "\"/></div></div>";
 		myString += "</div>";
+		//begin with container special parts of trick
 		myString += "<div class=\"trickSpecialContainer\">";
-		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: orange;\"><img src=\"" + coinsIconBase64 + "\"/></div></div>";
-		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: darkblue;\"><img src=\"" + handcuffIconBase64 + "\"/></div>";
-		myString += "<div class=\"trickSpecialTierTwoCaptureButton\"><img src=\"" + crownIconBase64 + "\"/></div><div class=\"trickSpecialTierTwoCaptureButton\"><img src=\"" + pirateIconBase64 + "\"/></div><div class=\"trickSpecialTierTwoCaptureButton\"><img src=\"" + mermaidIconBase64 + "\"/></div>";
+		//start alliances
+		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: orange;\" onclick=\"showSpecialTricks(this)\"><img src=\"" + coinsIconBase64 + "\"/></div></div>";
+		myString += "<div class=\"trickSpecialTierTwoArea\"><div class=\"trickSpecialLootArea\">";
+		for (var j = 0; j < players.length; j++) {
+			if (i != j) {
+			myString += "<div class=\"trickSpecialTierTwoCaptureButtonLoot\">";
+			myString += players[j];
+			myString += "</div>";
+			}
+		}
+		myString += "</div></div>";
 		myString += "</div>";
-		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: purple;\"><span>14+</span></div></div>";
+		//alliances ended in previous line, start, captures
+		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: darkblue;\" onclick=\"showSpecialTricks(this)\"><img src=\"" + handcuffIconBase64 + "\"/></div></div>";
+			myString += "<div class=\"trickSpecialTierTwoArea\">";
+			myString += "<img class=\"trickSpecialTierTwoCaptureButtonImg\" src=\"" + fishyMermaidIconBase64 + "\" onclick=\"specialTrickClick(this, " + i + ", 4)\"/>";
+			myString += "<img class=\"trickSpecialTierTwoCaptureButtonImg\" src=\"" + pirateIconBase64 + "\" onclick=\"specialTrickClick(this, " + i + ", 5)\"/>";
+			myString += "<img class=\"trickSpecialTierTwoCaptureButtonImg\" src=\"" + thickCrownIconBase64 + "\" onclick=\"specialTrickClick(this, " + i + ", 6)\"/>";	
+			myString += "</div>";
 		myString += "</div>";
+		// captures ended in previous line, start the 14s
+		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: purple;\" onclick=\"showSpecialTricks(this)\">14+</div></div>";
+		myString += "<div class=\"trickSpecialTierTwoArea\">";
+		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 2)\">+10</div>";
+		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 3)\">+20</div>";
+		myString += "</div>";
+		myString += "</div>";
+		//14s ended in previous line, end specials altogether
+		myString += "</div>";
+		//add the number buttons
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"trickButton\" onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
 		}
-		
+		//add the user overview
+		myString += "<div class=\"trickPlayerSpecialTextBox\" id=\"trickPlayerSpecialTextBox" + i + "\"></div>";
+		//end player area
 		myString += "</div>";
 	}
 	myString += "<div class=\"trickEntryErrorMessage\" id=\"trickEntryErrorMessage\">Missing tricks have been auto-filled to 0!</div><div class=\"trickButtonArea\"><div class=\"trickBackButton\">Previous</div><div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div></div>";
 	document.getElementById("trickAreaWrapper").innerHTML = myString;
 }
+
+function showSpecialTricks(buttonElement) {
+	//user wants to see a special trick in more detail
+	//first, lets determine if the user wants to show or hide one by determing the state of hus current target
+	var remember = buttonElement.parentElement.parentElement.children[1].style.display;
+	//lets start by hiding all of them
+	var elements = document.getElementsByClassName('trickSpecialTierTwoArea');
+	for (var i = 0; i < elements.length; i++) {
+		elements[i].style.display="none";
+	}
+	if (remember != "flex") {
+		buttonElement.parentElement.parentElement.children[1].style.display = "flex";
+	}
+}
+
 function showBidEdit(switcher) {
+	//show the bid edit buttons in the trick view
 	var elements = document.getElementsByClassName('trickViewBidEditButton');
 	for (var i = 0; i < elements.length; i++) {
 		if (switcher) {
@@ -562,6 +645,7 @@ function showBidEdit(switcher) {
 }
 
 function trickViewEditBidClick(buttonElement, playerID, direction) {
+	//edit bid in the trick view
 	if (direction == 1) {
 		//user clicked a plus button
 		gameData[editingRound][playerID][0]++;
@@ -581,6 +665,7 @@ function trickViewEditBidClick(buttonElement, playerID, direction) {
 }
 
 function trickClick(buttonElement, playerID, trickValue) {
+	//the user clicked on one of the numbers for setting a trick
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
@@ -594,11 +679,107 @@ function trickClick(buttonElement, playerID, trickValue) {
 	//write values into the data structure
 	gameData[editingRound][playerID][1] = trickValue;
 }
+function specialTrickClick(buttonElement, playerID, trickID) {
+	//the order is bid, trick, +10, +20, mermaid, pirate, king
+	gameData[editingRound][playerID][trickID]++;
+	setUserResultString(playerID);
+}
+
+function setUserResultString(playerID) {
+	//We begin by looking at the specials
+	//We slowly build the output with lots of IFs to create a perfect sentence structure; this is messy
+	var output = "";
+	var number = 0;
+	var earned_used = false;
+	var captured_used = false;
+	//+10
+	number = gameData[editingRound][playerID][2];
+	if (number != 0) {
+		earned_used = true;
+		output += " earned a +10";
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	//+20
+	number = gameData[editingRound][playerID][3];
+	if (number != 0) {
+		if (earned_used) {
+			output += " and a +20";
+		} else {
+			output += " earned a +20";
+			earned_used = true;
+		}
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	if (earned_used) {
+		output += " bonus";
+	}
+	//mermaid
+	number = gameData[editingRound][playerID][4];
+	if (number != 0) {
+		if (earned_used) {
+			output += ", and ";
+		}
+		output += " captured a Mermaid";
+		captured_used = true;
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	//pirate
+	number = gameData[editingRound][playerID][5];
+	if (number != 0) {
+		if (!captured_used) {
+			if (earned_used) {
+				output += ", and ";
+			}
+			output += " captured";
+		} else {
+			// can we give ourselves an "and" to concatenate with the previous capture? It depends on the existence of a third capture!
+			if (gameData[editingRound][playerID][6] === 0) {
+				output += " and";
+			} else {
+				output += ", ";
+			}
+		}
+		output +=  " a Pirate";
+		captured_used = true;
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	//skull king
+	number = gameData[editingRound][playerID][6];
+	if (number != 0) {
+		if (!captured_used) {
+			if (earned_used) {
+				output += ", and ";
+			}
+			output += " captured";
+		} else {
+			output += " and";
+		}
+		output += " a Skull King";
+		captured_used = true;
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	//we are done with building the array
+	if (output != "") {
+		output = players[playerID] + " has" + output + "!";
+	}
+	document.getElementById("trickPlayerSpecialTextBox" + playerID).innerHTML = output;
+}
+
 function confirmTricks() {
-	
+	//user is done with the tricks
 }
 function backButton() {
-	
+	//user wants to edit the previous round of tricks
 }
 </script>
 </head>
@@ -636,16 +817,15 @@ This app loads the piratey font from Google Fonts.
 <br><br>
 
 Image Credits:<br>
-<a target="_blank" href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a>, specifically <a href="https://www.flaticon.com/free-icon/human-skull-with-crossed-bones-silhouette_30428?term=bone+skull&page=1&position=1&origin=search&related_id=30428">this</a><br>
 <a target="_blank" href="https://icons8.com/icon/bnngLiNhpnAZ/reduce">Minus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
 <a target="_blank" href="https://icons8.com/icon/sE8CuzuVQX3D/add-new">Plus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
 <a target="_blank" href="https://icons8.com/icon/KM21AHTWYkMK/handcuff">Handcuff</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
 <a target="_blank" href="https://icons8.com/icon/mM6pLV4Ru4PS/coins">Coins</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
-<a target="_blank" href="https://icons8.com/icon/95263/mermaid">Mermaid</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
+<a target="_blank" href="https://icons8.com/icon/t1YRq4LYARtS/mermaid">Mermaid</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
 <a target="_blank" href="https://icons8.com/icon/86717/crown">Crown</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
 <a target="_blank" href="https://icons8.com/icon/8sD9sEJ7OiP0/pirate">Pirate</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
+<a target="_blank" href="https://www.flaticon.com/free-icons/bone" title="bone icons">Favicon: Bone icons created by Freepik - Flaticon</a>, specifically <a href="https://www.flaticon.com/free-icon/human-skull-with-crossed-bones-silhouette_30428?term=bone+skull&page=1&position=1&origin=search&related_id=30428">this</a>
 </div>
-
 </div>
 <div id="emptyDiv" style="display: none;"></div>
 
