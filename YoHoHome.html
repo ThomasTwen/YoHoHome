@@ -126,7 +126,7 @@ input:active, input:focus {
 .viewSelectorLine {
 	position: absolute;
 	background-color: #303030;
-	top: 41px; 
+	top: 45px; 
 	left: 0;
 	height: 2px;
 	width: 100%;
@@ -232,7 +232,7 @@ input:active, input:focus {
 
 .trickSpecialTierOneArea {
 	border-radius: 5px;
-	width: 80%;
+	width: 90%;
 	margin-inline: auto;
 	display: flex;
 	justify-content: center;
@@ -249,8 +249,8 @@ input:active, input:focus {
 
 .trickSpecialTierTwoArea {
 	border-radius: 5px;
-	width: 80%;
-	padding: 2px;
+	width: 90%;
+	padding: 3px 0px;
 	display: none;
 	margin-inline: auto;
 	justify-content: space-between;
@@ -259,19 +259,20 @@ input:active, input:focus {
 .trickSpecialLootArea {
 	display: flex;
 	flex-direction: column;
-	padding-top: 3px;
+	align-items: center;
+	padding-top: 2px;
 	width: 100%;
 }
 
 .trickSpecialTierTwoCaptureButtonImg {
 	border-radius: 5px;
 	background: darkblue;
-	padding: 5px;
+	padding: 7px;
 }
 .trickSpecialTierTwoCaptureButtonText {
 	border-radius: 5px;
 	background: purple;
-	padding: 5px;
+	padding: 6px;
 	width: 40%;
 }
 .trickSpecialTierTwoCaptureButtonLoot {
@@ -770,9 +771,13 @@ function setUserResultString(playerID) {
 	}
 	//we are done with building the array
 	if (output != "") {
-		output = players[playerID] + " has" + output + "!";
+		output = players[playerID] + " has" + output + ", for a potential bonus of " + getPotentialSpecialScore(editingRound, playerID) + "!";
 	}
 	document.getElementById("trickPlayerSpecialTextBox" + playerID).innerHTML = output;
+}
+function getPotentialSpecialScore(round, playerID) {
+	var myArray = gameData[round][playerID];
+	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40;
 }
 
 function confirmTricks() {
