@@ -155,11 +155,11 @@ input:active, input:focus {
 	font-size: 0.8em;
 }
 .bidNameBox {
-	width: 100%;
+	width: 96%;
 	background: #303030;
 	display: block;
-	text-align: center;
-	padding: 5px;
+	text-align: left;
+	padding: 5px 5px 5px 15px;
 	font-size: 0.8em;
 	margin-bottom: 10px;
 }
@@ -196,7 +196,7 @@ input:active, input:focus {
 	font-size: 1.5em;
 }
 .trickPlayerColorBox {
-	width: 100%;
+	width: 98%;
 	background: #303030;
 	display: flex;
 	padding: 5px;
@@ -452,17 +452,31 @@ function startGame() {
 	}
 	if(existingNames >= 2 && !nameDouble) {
 		//Lets start
-		//initialize array for round 1
-		gameData[1] = new Array();
+		//initialize arrays
+		for (var r = 1; r < 11; r++) {
+			gameData[r] = new Array();
+			alliances[r] = new Array();
+		}
 		//populate players array
 		var j = 0;
 		for (var i = 0; i < children.length; i++) {
 			//check if field is empty
   			if (children[i].children[1].value) {
   				players[j] = sanitize(children[i].children[1].value);
-  				gameData[1][j] = [0, 0, 0, 0, 0, 0, 0];
+  				for (var r = 1; r < 11; r++) {
+  					gameData[r][j] = [0, 0, 0, 0, 0, 0, 0];
+  					alliances[r][j] = new Array();
+  				}
   				j++;
   			}
+		}
+		//populate alliances array
+		for (var r = 1; r < 11; r++) {
+			for (var i = 0; i < players.length; i++) {
+				for (var j = 0; j < players.length; j++) {
+					alliances[r][i][j] = 0;
+				}
+			}
 		}
 		//show the right divs
 		document.getElementById("nameEntryAreaWrapper").style.display = "none";
@@ -505,7 +519,7 @@ function showView(view) {
 	}
 }
 function updateBidStructure() {
-	var myString = "<div class=\"bidInstructionString\">Enter player bids:</div>";
+	var myString = "<div class=\"bidInstructionString\">Round " + currentRound + ": Enter Bids</div>";
 	for (var i = 0; i < players.length; i++) {
 		myString += "<div class=\"playerBoxMargin bidUserBox\"><span class=\"bidNameBox\">" + players[i] + "</span>";
 		for (var j = 0; j <= currentRound; j++) {
@@ -580,7 +594,7 @@ function updateTrickStructure(editMode) {
 		myString += "<div class=\"trickSpecialTierTwoArea\"><div class=\"trickSpecialLootArea\">";
 		for (var j = 0; j < players.length; j++) {
 			if (i != j) {
-			myString += "<div class=\"trickSpecialTierTwoCaptureButtonLoot\">";
+			myString += "<div class=\"trickSpecialTierTwoCaptureButtonLoot\" onclick=\"trickAllianceClick(this, " + i + ", " + j + ")\">";
 			myString += players[j];
 			myString += "</div>";
 			}
@@ -683,10 +697,21 @@ function trickClick(buttonElement, playerID, trickValue) {
 function specialTrickClick(buttonElement, playerID, trickID) {
 	//the order is bid, trick, +10, +20, mermaid, pirate, king
 	gameData[editingRound][playerID][trickID]++;
-	setUserResultString(playerID);
+	setPlayerResultString(playerID);
+	//hide the buttons that he just clicked
+	buttonElement.parentElement.style.display = "none";
+}
+function trickAllianceClick(buttonElement, playerOne, playerTwo) {
+	//increase alliance count
+	alliances[editingRound][playerOne][playerTwo]++;
+	//hide the buttons
+	buttonElement.parentElement.parentElement.style.display = "none";
+	//update the texts
+	setPlayerResultString(playerOne);
+	setPlayerResultString(playerTwo);
 }
 
-function setUserResultString(playerID) {
+function setPlayerResultString(playerID) {
 	//We begin by looking at the specials
 	//We slowly build the output with lots of IFs to create a perfect sentence structure; this is messy
 	var output = "";
@@ -769,6 +794,45 @@ function setUserResultString(playerID) {
 			output += " (x" + number + ")";
 		}
 	}
+	//alliances
+	var previous_text = false;
+	if (captured_used || earned_used) {
+		previous_text = true;
+	}
+	var previous_alliances = false;
+	var processed_alliances = 0;
+	//we need the total number of alliances ahead of time to switch between, and and as a separator
+	total_alliances = 0;
+	for (var i = 0; i < players.length; i++) {
+		total_alliances = total_alliances + alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
+	}
+	if (total_alliances > 0) {
+		for (var i = 0; i < players.length; i++) {
+			var number = alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
+			if (number > 0) {
+				processed_alliances++;
+				if (!previous_alliances) {
+					if (previous_text) {
+						output += ", and";
+					}
+					output += " an alliance with ";
+				} else {
+					// can we give ourselves an "and" to concatenate with the previous alliance? It depends on the existence of a third capture!
+					if (processed_alliances == total_alliances) {
+						output += " and ";
+					} else {
+						output += ", ";
+					}
+				}
+				output +=  players[i];
+				previous_alliances = true;
+				if (number > 1) {
+					output += " (x" + number + ")";
+				}
+				previous_alliance = true;
+			}
+		}
+	}
 	//we are done with building the array
 	if (output != "") {
 		output = players[playerID] + " has" + output + ", for a potential bonus of " + getPotentialSpecialScore(editingRound, playerID) + "!";
@@ -776,8 +840,14 @@ function setUserResultString(playerID) {
 	document.getElementById("trickPlayerSpecialTextBox" + playerID).innerHTML = output;
 }
 function getPotentialSpecialScore(round, playerID) {
+	//get the relevant data into a better form factor
 	var myArray = gameData[round][playerID];
-	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40;
+	//count alliances
+	total_alliances = 0;
+	for (var i = 0; i < players.length; i++) {
+		total_alliances = total_alliances + alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
+	}
+	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40 + total_alliances * 20;
 }
 
 function confirmTricks() {
