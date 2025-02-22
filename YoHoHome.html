@@ -154,14 +154,20 @@ input:active, input:focus {
 	width: 100%;
 	font-size: 0.8em;
 }
-.bidNameBox {
+.bidNameBoxWrapper {
 	width: 96%;
 	background: #303030;
-	display: block;
-	text-align: left;
+	display: flex;
+	justify-content: space-between;
 	padding: 5px 5px 5px 15px;
 	font-size: 0.8em;
 	margin-bottom: 10px;
+}
+.bidNameBox {
+
+}
+.bidScoreBox {
+	padding-right: 15px;
 }
 .bidButton, .trickButton {
 	display: inline-block;
@@ -521,7 +527,8 @@ function showView(view) {
 function updateBidStructure() {
 	var myString = "<div class=\"bidInstructionString\">Round " + currentRound + ": Enter Bids</div>";
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin bidUserBox\"><span class=\"bidNameBox\">" + players[i] + "</span>";
+		myString += "<div class=\"playerBoxMargin bidUserBox\"><div class=\"bidNameBoxWrapper\"><div class=\"bidNameBox\">" + players[i] + "</div><div class=\"bidScoreBox\">Score goes here!";
+		myString += "</div></div>";
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"bidButton\" onclick=\"bidClick(this," + i + ", " + j + ")\">" + j + "</div>";
 		}
@@ -845,13 +852,44 @@ function getPotentialSpecialScore(round, playerID) {
 	//count alliances
 	total_alliances = 0;
 	for (var i = 0; i < players.length; i++) {
-		total_alliances = total_alliances + alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
+		total_alliances += alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
 	}
 	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40 + total_alliances * 20;
 }
 
 function confirmTricks() {
 	//user is done with the tricks
+	//first, check if the user has selected enough tricks
+	selected_tricks = 0;
+	for (var i = 0; i < players.length; i++) {
+		selected_tricks += gameData[currentRound][i][1];
+	}
+	var finish_round = false;
+	if (selected_tricks == editingRound) {
+		finish_round = true;
+	} else if (selected_tricks > editingRound) {
+		//you cant have more tricks than the round you are in
+		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to change this?")) {
+			finish_round = true;
+		}
+	} else {
+		//you might have less tricks than the round you are in, lets be friendly
+		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to continue?")) {
+			finish_round = true;
+		}
+	}
+	if (finish_round) {
+		//round is over, do something now
+		if (editingRound == currentRound) {
+			currentRound++;
+			currentGameView = 0;
+			showView(0);
+		} else {
+			editingRound = currentRound;
+			updateTrickStructure();
+			showView(1);
+		}
+	}
 }
 function backButton() {
 	//user wants to edit the previous round of tricks
