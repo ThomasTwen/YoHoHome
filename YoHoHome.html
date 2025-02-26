@@ -190,16 +190,36 @@ input:active, input:focus {
 	text-align: center;
 	display: none;
 }
+
+.bidButtonArea {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+}
+
+.bidBackButton {
+	color: white;
+	background: #303030;
+	width: 30%;
+	border-radius: 10px;
+	padding: 17px 7px;
+	text-align: center;
+	border: 2px solid #303030;
+	font-size: 0.8em;
+	display: inline;
+	margin-right: 10px;
+}
 .bidConfirmButton {
 	color: white;
 	background: orange;
-	width: 70%;
+	width: 60%;
 	border-radius: 10px;
-	padding: 5px;
-	margin-inline: auto;
+	padding: 7px;
 	text-align: center;
 	border: 2px solid orange;
 	font-size: 1.5em;
+	display: inline;
 }
 .trickPlayerColorBox {
 	width: 98%;
@@ -279,7 +299,12 @@ input:active, input:focus {
 	border-radius: 5px;
 	background: purple;
 	padding: 6px;
-	width: 40%;
+	width: 23%;
+	height: 32px;
+	font-size: 0.8em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .trickSpecialTierTwoCaptureButtonLoot {
 	border-radius: 5px;
@@ -302,26 +327,76 @@ input:active, input:focus {
 .trickBackButton {
 	font-size: 0.8em;
 	background: #303030;
+	width: 30%;
 	color: white;
 	border-radius: 10px;
-	padding: 7px 20px;
+	padding: 17px 7px;
 	text-align: center;
 	margin-right: 10px;
 }
 .trickConfirmButton {
 	color: white;
 	background: orange;
-	width: 75%;
+	width: 60%;
 	border-radius: 10px;
 	padding: 7px;
 	text-align: center;
-	font-size: 0.8em;
+	font-size: 1.5em;
 }
 .leaderBoardAreaWrapper {
 	display: none;
+	margin-top: 20px;
 }
 
+.roundResultAreaWrapper {
+	display: none;
+	margin-top: 20px;
+}
 
+.roundResultTableWrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.roundResultTableHeaderRow {
+	color: white;
+	margin-top: 10px;
+	font-size: 0.8em;
+}
+.roundResultTableRow {
+	background: #303030;
+	border-radius: 5px;
+	color: orange;
+	margin-top: 5px;
+	padding: 10px;
+}
+.roundResultTableItemRank {
+	display: inline-block;
+	width: 200px;
+	text-align: left;
+}
+.roundResultTableItemRound {
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+.roundResultTableItemTotal {
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+.roundResultConfirmButton {
+	background: orange;
+	color: white;
+	border-radius: 5px;
+	padding: 5px 20px;
+	margin-top: 20px;
+	font-size: 1.5em;
+}
+
+.leaderBoardArea {
+
+}
 </style>
 <script type="text/javascript">
 var allowGameStart = false;
@@ -329,12 +404,13 @@ var players = new Array();
 var totalscores = new Array();
 var gameData = new Array();
 // first round, then player
-// bid - trick - +10, +20, mermaid, pirate, king
+// bid - trick - +10, +20, mermaid, pirate, king, -10
 var alliances = new Array();
 //list of arrays, round, player, player
 var currentRound = 0;
+var currentRoundBidsDone = false;
 var editingRound = 0;
-//toggle between bid (0) and trick (1) game views
+//toggle between bid (0), trick (1) and roundResult(2) game views
 var currentGameView = 0;
 var minusIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABUElEQVR4nO2WTU7DMBCFn+gF6G16BeAWLYegsOAE/GyRECwyE1VR2aCyokdgDdtWAq4Aqz40TgIU1W5KY8KiI42UxJ58npdYfsAmmg5maDFBhwm6VBxScE7FBRWZS8Gdy/I+Hztzc63GajO0VoOm2KPilQqulYIXKnarQwWztaFf8NlSuJM3XyVrzmceY8sPtu9SPzTPBB0/WLEfDSzohcBHEcF9PzjfMnHAitMQ+Coi+DIETiNKLaFvfOMpfKNiQsEjFQ9U3FNw69Ku7Vk+NinmLgIPQx2Pfkx+5zW2vQX+Btqudv5do9XAinZ8sAalnlLwVEg9/ib1uJDaxqa/lTpt5ueSpraTuvM0VscnoY77ETs+CIF70cAJuv/wWMwaMgIWZlNqtz6CHVQJB7dV1tFpVWgZJs2cvc23mlnYwQJ7O/i0t7YzSnu7TN5N4A/iA7eHO5DCbuIiAAAAAElFTkSuQmCC";
 var plusIconBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABc0lEQVR4nO2WS07DQAyGf+gBCkegXKJXAG7RcggKC07AY4uEQCLjUI1gV85C2AMS4QQIVCPPNBAiMnWUQLqoJUt9zO9v7BknBpbWtrFFhyP0OcKACftscMqEMyZY5wZ3zrPv/r8Tt1Y0orXoVIPG2GHCMxO4lhs8MWFbDzWY1oZ+w6dz4a68fpfcsD/yIVbLwXIuzUO9R+iXgwm76kBX2GBCr0LJhyHwgTqQRZcvsVYBPCoH+5bRBHlnxopz+ayDH4fAF8ogLzlNqtSch8CxMuP73PEkSo0JnfFtQPgxyy6RyhSqJL+lbk25/iaU8aSw+M3dXItuqagYQy6daLw2H2uygGBqr9Sx8oYmOc1D/ctllO1kkOY0r/Xbidz79G8eIAZHoYxHyt3z7HG5rl5P2AuBhxUC9fgam+r1EQYL+Fq0LQ0CYjKmND76GGxBYw4uu2wiUy00MynNj/HWt5qMsONfxtvx13grnZGNt/PKuzT8g30CLtEaEMMnXGIAAAAASUVORK5CYII=";
@@ -371,6 +447,7 @@ function toggleAbout(changeTo) {
 }
 var nameEntryString = "<div class=\"nameEntry\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADUUlEQVR4nO3cO2gVQRTG8YlPUEFBsfDR+AQRtREsBEE70UZEsFBEIYU2YmOqYGGhdhIQBBG0EjSVIIqCqCCIElIEtdI0Por4SopANPcvIxtMJCbZmbl3Zme/X5/L2f12Z5fZc2KMiIiIiIiIiIiIiIiIiIgEBCwE5oT8TfEL4zFwB5jr+jsSNowxCiWhMBRKgmEolATDUCgJhqFQEgzDegbMa3pxdYNbGP3A8ti1Zwe3MIaALbFrzw5uYTSAQ7Frzw5uYVidsWvPDu5hdANtsevPCu5h9Nq/jV1/VnAPYwBYE7v+rOAexgiwK3b9WcE9DKs9dv1ZwS+My7Hrzwp+YTzSV8J0wngHLAtZT63hF8YgsDn2MWQDvzBGgf2xjyEb+IVhdcQ+hmzgH8ZtbYukE0YPsCBUPbWGfxifgFWxjyML+IcxDOwwqQHWAsdMhQCLim/aPo6a1ADzgVfj9vuXmvzvDOuSSRHQxUSfgb0m7zAeALNNaoCDU3w3vpramwdhwngLLDGJPje+T1N8H7DN5BPGD2CTSfy5MZM3kbPArIqH8SvZpRg46bjurqjo25R1xqTKDp4AdynvG3C4YneGdcOkzvakAvdxc9NeuRUJ47ldok0V2Lco4Knjgb4HdiYexgdgpakSYDHw0vGAfwIXQs7eES4M+zKy3VSR/VxZvOK6egGsTyiMRiufdU1hW+uBNx4nYdCnZYZwYVjnTQ6A1cWzwUfp/TDChnEvyW0RV8A64KPnSZnxfhhhw3htn4kmN8DG4qT6aEy3HxY4jC/2YjK5ArYCXwOcqL7J9sMCh2Hf9nab3NmvacX4lq/h8fthgcOwTpm6sFdecUJDeAhsCBzGdVM3wL6iLT+EBuE8qe0/hAEOFGt1KvprP5YMHCnaLWMb0ljy3zvleOBlpyyNJU+yfJ0mns5WL9eVAJyLEEa3+m+nDuViC8Po1Vjy9HdJG3ClBWEMaCy5XCjXmhjGiMaSS7Lb3cCtJgXSXrYe8etkmYrGkiN2svxLY8kJdLKM0VhyQp0sgxpLTqeTZVRjyWl1snQ0sx4xpTpZNJacUCdLT2rDQdnj/50sGktOqJNlOMmx5DphYifLidj1iPkTyp5s+m9FRERERERERERExOTvNx4w2r5e+WKBAAAAAElFTkSuQmCC\"";
 nameEntryString += "class =\"nameEntryTickMark\"/><input type=\"text\" oninput=\"nameEntryChange()\"></div>";
+
 function nameEntryChange() {
 	// There should be at least two name fields, the last of which should be empty
 	// Loop over all name entry areas
@@ -436,6 +513,7 @@ function nameEntryChange() {
 		document.getElementById("startGameButton").style.background = "orange";
 	}
 }
+
 function startGame() {
 	//begin by checking the names, we should have at least two names and no diuplicates
 	var nameDouble = false;
@@ -470,7 +548,7 @@ function startGame() {
   			if (children[i].children[1].value) {
   				players[j] = sanitize(children[i].children[1].value);
   				for (var r = 1; r < 11; r++) {
-  					gameData[r][j] = [0, 0, 0, 0, 0, 0, 0];
+  					gameData[r][j] = [0, 0, 0, 0, 0, 0, 0, 0];
   					alliances[r][j] = new Array();
   				}
   				j++;
@@ -509,9 +587,15 @@ function showView(view) {
 		if (currentGameView == 0) {
 			document.getElementById("bidAreaWrapper").style.display="block";
 			document.getElementById("trickAreaWrapper").style.display="none";
-		} else {
+			document.getElementById("roundResultAreaWrapper").style.display="none";
+		} else if (currentGameView == 1){
 			document.getElementById("trickAreaWrapper").style.display="block";
 			document.getElementById("bidAreaWrapper").style.display="none";
+			document.getElementById("roundResultAreaWrapper").style.display="none";
+		} else {
+			document.getElementById("trickAreaWrapper").style.display="none";
+			document.getElementById("bidAreaWrapper").style.display="none";
+			document.getElementById("roundResultAreaWrapper").style.display="block";			
 		}
 		document.getElementById("leaderBoardAreaWrapper").style.display = "none";
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
@@ -519,23 +603,40 @@ function showView(view) {
 	} else {
 		document.getElementById("bidAreaWrapper").style.display="none";
 		document.getElementById("trickAreaWrapper").style.display="none";
+		document.getElementById("roundResultAreaWrapper").style.display="none";
 		document.getElementById("leaderBoardAreaWrapper").style.display = "block";
 		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid #303030";
 		document.getElementById("leaderBoardViewSelectorButton").style.borderBottom="2px solid black";
+		updateLeaderBoardStructure();
 	}
 }
 function updateBidStructure() {
 	var myString = "<div class=\"bidInstructionString\">Round " + currentRound + ": Enter Bids</div>";
 	for (var i = 0; i < players.length; i++) {
-		myString += "<div class=\"playerBoxMargin bidUserBox\"><div class=\"bidNameBoxWrapper\"><div class=\"bidNameBox\">" + players[i] + "</div><div class=\"bidScoreBox\">Score goes here!";
+		myString += "<div class=\"playerBoxMargin bidUserBox\"><div class=\"bidNameBoxWrapper\"><div class=\"bidNameBox\">" + players[i] + "</div><div class=\"bidScoreBox\">";
+		if(currentRound > 1) {
+			myString += "Total: " + getTotalScore(i) + "pts.";
+		}
 		myString += "</div></div>";
 		for (var j = 0; j <= currentRound; j++) {
 			myString += "<div class=\"bidButton\" onclick=\"bidClick(this," + i + ", " + j + ")\">" + j + "</div>";
 		}
 		myString += "</div>";
 	}
-	myString += "<div class=\"bidEntryErrorMessage\" id=\"bidEntryErrorMessage\">Missing bids have been auto-filled to 0!</div><div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div>";
+	myString += "<div class=\"bidEntryErrorMessage\" id=\"bidEntryErrorMessage\">Missing bids have been auto-filled to 0!</div>";
+	myString += "<div class=\"bidButtonArea\">";
+	if (editingRound > 1) {
+		myString += "<div class=\"bidBackButton\" onclick=\"backFromBids()\">Back to Round " + (editingRound-1) + "</div>";
+	}
+	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div></div>";
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
+}
+
+function backFromBids() {
+	editingRound--;
+	currentGameView = 1;
+	showView(0);
+	updateTrickStructure();
 }
 function bidClick(buttonElement, playerID, bidValue) {
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
@@ -579,14 +680,15 @@ function confirmBids() {
 	} else {
 		//Bids are finished, lets switch views!
 		//there are two different view variables to make things more complicated
+		currentRoundBidsDone = true;
 		currentGameView = 1;
 		showView(0);
 		updateTrickStructure();
 	}
 }
-function updateTrickStructure(editMode) {
-	if (editMode) {
-		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Edit tricks for round " + editingRound + ":</div>";
+function updateTrickStructure() {
+	if (currentRound > editingRound) {
+		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Edit tricks for Round " + editingRound + ":</div>";
 	} else {
 		var myString = "<div id=\"trickInstructionString\" class=\"trickInstructionString\">Round " + currentRound + ": Enter Tricks Won</div>";
 	}
@@ -619,22 +721,32 @@ function updateTrickStructure(editMode) {
 		// captures ended in previous line, start the 14s
 		myString += "<div class=\"trickSpecialThirdArea\"><div class=\"trickSpecialTierOneArea\"><div class=\"trickSpecialTierOneButton\" style=\"background: purple;\" onclick=\"showSpecialTricks(this)\">14+</div></div>";
 		myString += "<div class=\"trickSpecialTierTwoArea\">";
-		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 2)\">+10</div>";
-		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 3)\">+20</div>";
+		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 2)\"><div>+10</div></div>";
+		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 3)\"><div>+20</div></div>";
+		myString += "<div class=\"trickSpecialTierTwoCaptureButtonText\" onclick=\"specialTrickClick(this, " + i + ", 7)\" style=\"background: #600060;\"><div>-10</div></div>";
 		myString += "</div>";
 		myString += "</div>";
 		//14s ended in previous line, end specials altogether
 		myString += "</div>";
 		//add the number buttons
 		for (var j = 0; j <= currentRound; j++) {
-			myString += "<div class=\"trickButton\" onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
+			myString += "<div class=\"trickButton\" ";
+			//do we have to add special code because we are in edit mode and the button has the clicked look right from the start?
+			if (editingRound < currentRound && j == gameData[editingRound][i][1]) {
+				myString += "style=\"background: orange; color: white; border-color: orange;\" ";
+			}
+			myString += "onclick=\"trickClick(this," + i + ", " + j + ")\">" + j + "</div>";
 		}
 		//add the user overview
 		myString += "<div class=\"trickPlayerSpecialTextBox\" id=\"trickPlayerSpecialTextBox" + i + "\"></div>";
 		//end player area
 		myString += "</div>";
 	}
-	myString += "<div class=\"trickEntryErrorMessage\" id=\"trickEntryErrorMessage\">Missing tricks have been auto-filled to 0!</div><div class=\"trickButtonArea\"><div class=\"trickBackButton\">Previous</div><div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div></div>";
+	myString += "<div class=\"trickEntryErrorMessage\" id=\"trickEntryErrorMessage\">Missing tricks have been auto-filled to 0!</div><div class=\"trickButtonArea\">";
+	if (editingRound > 1) {	
+		myString += "<div class=\"trickBackButton\" onclick=\"trickBackButton()\">Back to Round " + (editingRound-1) + "</div>";
+	}
+	myString += "<div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div></div>";
 	document.getElementById("trickAreaWrapper").innerHTML = myString;
 }
 
@@ -738,9 +850,27 @@ function setPlayerResultString(playerID) {
 	number = gameData[editingRound][playerID][3];
 	if (number != 0) {
 		if (earned_used) {
-			output += " and a +20";
+			//we might havwe to put an and, depending on the existence of another element
+			if (gameData[editingRound][playerID][7] > 0) {
+				output += ", a +20";
+			} else {
+				output += " and a +20";
+			}
 		} else {
 			output += " earned a +20";
+			earned_used = true;
+		}
+		if (number > 1) {
+			output += " (x" + number + ")";
+		}
+	}
+	//-10
+	number = gameData[editingRound][playerID][7];
+	if (number != 0) {
+		if (earned_used) {
+			output += " and a -10";
+		} else {
+			output += " earned a -10";
 			earned_used = true;
 		}
 		if (number > 1) {
@@ -842,7 +972,7 @@ function setPlayerResultString(playerID) {
 	}
 	//we are done with building the array
 	if (output != "") {
-		output = players[playerID] + " has" + output + ", for a potential bonus of " + getPotentialSpecialScore(editingRound, playerID) + "!";
+		output = players[playerID] + " has" + output + ", for a potential bonus of up to " + getPotentialSpecialScore(editingRound, playerID) + "!";
 	}
 	document.getElementById("trickPlayerSpecialTextBox" + playerID).innerHTML = output;
 }
@@ -852,9 +982,55 @@ function getPotentialSpecialScore(round, playerID) {
 	//count alliances
 	total_alliances = 0;
 	for (var i = 0; i < players.length; i++) {
-		total_alliances += alliances[editingRound][playerID][i] + alliances[editingRound][i][playerID];
+		total_alliances += alliances[round][playerID][i] + alliances[round][i][playerID];
 	}
-	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40 + total_alliances * 20;
+	return myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40 + total_alliances * 20 + myArray[7] * -10;
+}
+
+function getTotalScore(playerID) {
+	var score = 0;
+	for (var i = 1; i < currentRound; i++) {
+		score += getActualPlayerRoundScore(i, playerID);
+	}
+	return score;
+}
+
+function getActualPlayerRoundScore(round, playerID) {
+	//this is the same as the potential function, except we include the actual bid AND check if alliance partners won their round
+	var score = 0;
+	//get the relevant data into a better form factor
+	var myArray = gameData[round][playerID];
+	//Lets start by checking if we won or lost
+	if (myArray[0] != myArray[1]) {
+		//player lost
+		if (myArray[0] == 0) {
+			//he played a zero
+			score += round * -10;
+		} else {
+			score += Math.abs(myArray[0] - myArray[1]) * -10;
+		}
+		//-10 is always added, even in defeat
+		score += myArray[7] * -10;
+	} else {
+		//player won
+		if (myArray[0] == 0) {
+			//he played a zero
+			score += round * 10;
+		} else {
+			score += myArray[0] * 20;
+		}
+		//count alliances
+		total_alliances = 0;
+		for (var i = 0; i < players.length; i++) {
+			//playerID won, but did player i also win?
+			if (gameData[round][i][0] == gameData[round][i][1]) {
+				score += 20 * (alliances[round][playerID][i] + alliances[round][i][playerID]);
+			}
+		}
+		//add all the bonuses
+		score += myArray[2] * 10 + myArray[3] * 20 + myArray[4] * 20 + myArray[5] * 30 + myArray[6] * 40 + myArray[7] * -10;
+	}
+	return score;
 }
 
 function confirmTricks() {
@@ -862,14 +1038,14 @@ function confirmTricks() {
 	//first, check if the user has selected enough tricks
 	selected_tricks = 0;
 	for (var i = 0; i < players.length; i++) {
-		selected_tricks += gameData[currentRound][i][1];
+		selected_tricks += gameData[editingRound][i][1];
 	}
 	var finish_round = false;
 	if (selected_tricks == editingRound) {
 		finish_round = true;
 	} else if (selected_tricks > editingRound) {
 		//you cant have more tricks than the round you are in
-		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to change this?")) {
+		if (!confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to change this?")) {
 			finish_round = true;
 		}
 	} else {
@@ -880,19 +1056,108 @@ function confirmTricks() {
 	}
 	if (finish_round) {
 		//round is over, do something now
+		currentGameView = 2;
+		showView(0);
 		if (editingRound == currentRound) {
 			currentRound++;
-			currentGameView = 0;
-			showView(0);
-		} else {
-			editingRound = currentRound;
-			updateTrickStructure();
-			showView(1);
+			editingRound++;
+			currentRoundBidsDone = false;
 		}
+		updateRoundResultStructure();
 	}
 }
-function backButton() {
+function trickBackButton() {
 	//user wants to edit the previous round of tricks
+	editingRound--;
+	updateTrickStructure();
+}
+
+function getResultsTable() {
+	var myString = "<div class=\"roundResultTableWrapper\">";
+	//table header
+	myString +="<div class=\"roundResultTableHeaderRow\"><div class=\"roundResultTableItemRank\">#  Player</div><div class=\"roundResultTableItemRound\">Last Round</div><div class=\"roundResultTableItemTotal\">Total Score</div></div>"
+	//get total scores for all players
+	var results = new Array();
+	//loop through all players(!) and populate the array
+	for (var i = 0; i < players.length; i++) {
+		results[i] = [getTotalScore(i), 0];
+	}
+	//loop through all positions(!) and find the player(s) that occupies that position
+	var players_handled = 0;
+	for (var i = 1; players_handled < players.length; i++) {
+		//Identify the highest score that hasnt been assigned a rank yet
+		var currentScore = -99999999;
+		//loop over all players(!) and find it
+		for (var j = 0; j < players.length; j++) {
+			if (results[j][1] == 0 && results[j][0] > currentScore) {
+				currentScore = results[j][0];
+			}
+		}
+		//currentScore is the score required to hold the current position
+		//process all players that hold the current rank
+		players_handled_this_loop = 0;
+		for (var j = 0; j < players.length; j++) {
+			if (results[j][0] == currentScore) {
+				results[j][1] = i;
+				players_handled++;
+				myString += "<div class=\"roundResultTableRow\"><div class=\"roundResultTableItemRank\">" + i + ". " + players[j] + "</div><div class=\"roundResultTableItemRound\">" + getActualPlayerRoundScore(editingRound-1, j) + "</div><div class=\"roundResultTableItemTotal\">" + currentScore + "</div></div>";
+				//when there are two place 1s, the one after is 3, so we need to increment the rank
+				players_handled_this_loop++;
+			}
+		}
+		i += players_handled_this_loop;
+		//we increment the rank ourselves and need to counter the increment in the loop itself, because we (wrongly) used a for loop
+		i--;
+	}
+	return myString;
+}
+
+function updateRoundResultStructure() {
+	var myString = "<div>Results for Round " + (currentRound-1) + "</div>";
+	myString += getResultsTable();	
+	if (currentRound < 11) {
+		myString += "<div class=\"roundResultConfirmButton\" onclick=\"roundResultFinishButton()\">";
+		//change button label based on edit vs current mode
+		if (editingRound == currentRound) {
+			//current mode
+			myString += "Yo Ho Ho!";
+		} else {
+			myString += "Back to Current Round!";
+		}
+		myString +="</div>";
+	}
+	myString += "</div>";
+	document.getElementById("roundResultAreaWrapper").innerHTML = myString;
+}
+
+function roundResultFinishButton() {
+	//distinguish between current and edit mode
+	if (currentRound == editingRound) {
+		//current
+		currentGameView = 0;
+		updateBidStructure();
+	} else {
+		//edit mode -> we have to go back to the current round
+		editingRound = currentRound;
+		//is it bids or tricks?
+		if (currentRoundBidsDone) {
+			//we have to go the trick view
+			currentGameView = 1;
+			updateTrickStructure();
+		} else {
+			//we have to go the bid view
+			currentGameView = 0;
+			updateBidStructure();
+		}
+	}
+	showView(0);
+}
+
+function updateLeaderBoardStructure() {
+	var myString = "<div class=\"leaderBoardArea\"><div>Leaderboard</div>";
+	myString += getResultsTable();
+	myString += "</div>";
+	document.getElementById("leaderBoardAreaWrapper").innerHTML = myString;
 }
 </script>
 </head>
@@ -913,6 +1178,7 @@ function backButton() {
 	</div>
 	<div class="bidAreaWrapper" id="bidAreaWrapper"></div>
 	<div class="trickAreaWrapper" id="trickAreaWrapper"></div>
+	<div class="roundResultAreaWrapper" id="roundResultAreaWrapper"></div>
 	<div class="leaderBoardAreaWrapper" id="leaderBoardAreaWrapper"></div>
 </div>
 
@@ -921,10 +1187,13 @@ function backButton() {
 <div class="aboutText" id="aboutDiv">This app was developed by Thomas Twenh&ouml;ven and 
 is not associated with the creators of the base game.<br><br>
 
-Can I edit the bids after finalizing them?<br>
-Yes, just click on the player name.<br><br>
+<b>Can I edit the bids after finalizing them?</b><br>
+Yes, by clicking on the player name.<br><br>
 
-Is this app storing any of your data? <br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close or reload the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
+<b>How can I handle the pirate bets?</b><br>
+By adding +/-10 manually. The -10 "bonus" is always applied, even if a player loses.<br><br>
+
+<b>Is this app storing any of my data?</b><br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close or reload the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
 This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br>
 This app loads the piratey font from Google Fonts.
 <br><br>
