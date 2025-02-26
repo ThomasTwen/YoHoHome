@@ -1100,7 +1100,12 @@ function getResultsTable() {
 			if (results[j][0] == currentScore) {
 				results[j][1] = i;
 				players_handled++;
-				myString += "<div class=\"roundResultTableRow\"><div class=\"roundResultTableItemRank\">" + i + ". " + players[j] + "</div><div class=\"roundResultTableItemRound\">" + getActualPlayerRoundScore(editingRound-1, j) + "</div><div class=\"roundResultTableItemTotal\">" + currentScore + "</div></div>";
+				myString += "<div class=\"roundResultTableRow\"><div class=\"roundResultTableItemRank\">" + i + ". " + players[j] + "</div><div class=\"roundResultTableItemRound\">";
+				var scoreForPlus = getActualPlayerRoundScore(editingRound-1, j);
+				if (scoreForPlus > 0) {
+					myString += "+";
+				}
+				myString += scoreForPlus + "</div><div class=\"roundResultTableItemTotal\">" + currentScore + "</div></div>";
 				//when there are two place 1s, the one after is 3, so we need to increment the rank
 				players_handled_this_loop++;
 			}
