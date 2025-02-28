@@ -1274,7 +1274,7 @@ function updateLeaderBoardStructure() {
 			}
 			totalPointsChartData.push({
 			      data: totalPlayerData,
-			      fill: false,
+			      fill: true,
 			      label: players[i]
 			    });
 			roundPointsChartData.push({
@@ -1317,7 +1317,7 @@ function updateLeaderBoardStructure() {
 		new Chart("sourcePointsChart", {
 			  type: "bar",
 			  data: {
-			    labels: ["Bid 0", "Bid X", "Special"],
+			    labels: ["Bid Zero", "Bid X", "Special"],
 			    datasets: sourcePointsChartData
 			  },
 			  options: {
