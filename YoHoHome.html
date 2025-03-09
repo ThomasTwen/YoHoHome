@@ -1313,7 +1313,7 @@ function updateLeaderBoardStructure() {
 	myString += "</div>";
 	myString += "<div class=\"chartSection\"><div class=\"chartSectionHeadline\">Total Points</div><div class=\"chartSectionChart\"><canvas id=\"totalPointsChart\" style=\"width: 100%; height: 100%;\"></canvas></div></div>";
 	myString += "<div class=\"chartSection\"><div class=\"chartSectionHeadline\">Points per Round</div><div class=\"chartSectionChart\"><canvas id=\"roundPointsChart\" style=\"width: 100%; height: 100%;\"></canvas></div></div>";
-	myString += "<div class=\"chartSection\"><div class=\"chartSectionHeadline\">Source of Points</div><div class=\"chartSectionChart\"><canvas id=\"sourcePointsChart\" style=\"width: 100%; height: 100%;\"></canvas></div></div>";
+	myString += "<div class=\"chartSection\"><div class=\"chartSectionHeadline\">Bid Strategy</div><div class=\"chartSectionChart\"><canvas id=\"sourcePointsChart\" style=\"width: 100%; height: 100%;\"></canvas></div></div>";
 	
 	document.getElementById("leaderBoardAreaWrapper").innerHTML = myString;
 	
@@ -1332,6 +1332,12 @@ function updateLeaderBoardStructure() {
 				totalPlayerData.push(sumHelper);
 				roundPlayerData.push(scoreHelper);
 			}
+			// we are sclaing to 10 rounds, so we need to insert NaNs into the data for the missing rounds
+			while (j < 11) {
+				totalPlayerData.push("NaN");
+				roundPlayerData.push("NaN");
+				j++;
+			}
 			totalPointsChartData.push({
 			      data: totalPlayerData,
 			      fill: false,
@@ -1348,10 +1354,13 @@ function updateLeaderBoardStructure() {
 			      label: players[i]
 			    });
 		}
+		
+		//set xValues, unsure if scaling to 10 rounds to current number of rounds
 		var xValuesRounds = new Array();
-		for (var i = 1; i < currentRound; i++) {
-			xValuesRounds.push(i);
-		}
+		//for (var i = 1; i < currentRound; i++) {
+		//	xValuesRounds.push(i);
+		//}
+		xValuesRounds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		new Chart("totalPointsChart", {
 		  type: "line",
 		  data: {
@@ -1360,8 +1369,17 @@ function updateLeaderBoardStructure() {
 		  },
 		  options: {
 			  plugins: {
-				  legend: {display: true, position: "bottom"}
-			  }
+					legend: {display: true, position: "bottom"}
+			  },
+			  scales: {
+					y: {
+						suggestedMin: 0, 
+						title: {text: "Points", display: true}
+					}, 
+					x: {
+							title: {text: "Rounds", display: true}
+					}
+				}
 		  }
 		});
 		new Chart("roundPointsChart", {
@@ -1371,17 +1389,19 @@ function updateLeaderBoardStructure() {
 			    datasets: roundPointsChartData
 			  },
 			  options: {
-			    plugins: {legend: {display: false}}
+			    plugins: {legend: {display: false}},
+			    scales: {y: {title: {text: "Points", display: true}}, x: {title: {text: "Rounds", display: true}}}
 			  }
 			});
 		new Chart("sourcePointsChart", {
 			  type: "bar",
 			  data: {
-			    labels: ["Bid Zero", "Bid X", "Special"],
+			    labels: ["Bid: Zero", "Bid: Any", "Bonuses"],
 			    datasets: sourcePointsChartData
 			  },
 			  options: {
-			    plugins: {legend: {display: false}}
+				plugins: {legend: {display: false}},
+				scales: {y: {title: {text: "Points", display: true}}}
 			  }
 			});
 	}
