@@ -129,7 +129,7 @@ input:active, input:focus {
 .viewSelectorLine {
 	position: absolute;
 	background-color: #303030;
-	top: 45px; 
+	top: 50px; 
 	left: 0;
 	height: 2px;
 	width: 100%;
@@ -177,11 +177,32 @@ input:active, input:focus {
 	border: 4px solid #303030;
 	border-radius: 5px;
 	color: orange;
-	padding: 10px 24px;
-	margin: 0px 8px 10px 7px;
+	padding: 10px 12px;
+	margin: 0px 5px 10px 5px;
 	font-size: 1.5em;
-	min-width: 23px;
+	min-width: 36px;
 	text-align: center;
+}
+.bidButton10, .trickButton10 {
+	display: inline-block;
+	border: 4px solid #303030;
+	border-radius: 5px;
+	color: orange;
+	padding: 10px 12px;
+	margin: 0px 5px 10px 5px;
+	font-size: 1.5em;
+	min-width: 36px;
+	text-align: center;
+}
+
+.fakeBidTrickButton {
+	display: inline-block;
+	padding: 10px 12px;
+	margin: 0px 5px 10px 5px;
+	font-size: 1.5em;
+	min-width: 36px;
+	color: black;
+	border: 4px solid black;
 }
 .bidEntryErrorMessage, .trickEntryErrorMessage {
 	border-radius: 10px;
@@ -656,8 +677,18 @@ function updateBidStructure() {
 			myString += "Total: " + getTotalScore(i) + "pts.";
 		}
 		myString += "</div></div>";
-		for (var j = 0; j <= currentRound; j++) {
-			myString += "<div class=\"bidButton\" onclick=\"bidClick(this," + i + ", " + j + ")\"";
+		//this loop should run until editingRound, 10 is just for testing
+		for (var j = 0; j <= editingRound; j++) {
+			if (j == 6) {
+				myString += "<div class=\"fakeBidTrickButton\">0</div>";
+			}
+			myString += "<div class=\"";
+			if (j < 10) {
+				myString += "bidButton";
+			} else {
+				myString += "bidButton10";
+			}
+			myString += "\" onclick=\"bidClick(this," + i + ", " + j + ")\"";
 			if (j == gameData[editingRound][i][0]) {
 				myString += " style=\"background: orange; color: white; border-color: orange;\"";
 			}
@@ -684,9 +715,11 @@ function bidClick(buttonElement, playerID, bidValue) {
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
-		currentElement.style.borderColor = "#303030";
-		currentElement.style.background = "black";
-		currentElement.style.color = "orange";
+		if (currentElement.className != "fakeBidTrickButton") {
+			currentElement.style.borderColor = "#303030";
+			currentElement.style.background = "black";
+			currentElement.style.color = "orange";
+		}
 	}
 	buttonElement.style.borderColor = "orange";
 	buttonElement.style.background = "orange";
@@ -766,8 +799,15 @@ function updateTrickStructure() {
 		//14s ended in previous line, end specials altogether
 		myString += "</div>";
 		//add the number buttons
-		for (var j = 0; j <= currentRound; j++) {
-			myString += "<div class=\"trickButton\" ";
+		for (var j = 0; j <= editingRound; j++) {
+			if (j == 6) {
+				myString += "<div class=\"fakeBidTrickButton\">0</div>";
+			}
+			if (j < 10 ) {
+				myString += "<div class=\"trickButton\" ";
+			} else {
+				myString += "<div class=\"trickButton10\" ";
+			}
 			//do we have to add special code because we are in edit mode and the button has the clicked look right from the start?
 			if (editingRound < currentRound && j == gameData[editingRound][i][1]) {
 				myString += "style=\"background: orange; color: white; border-color: orange;\" ";
@@ -840,9 +880,11 @@ function trickClick(buttonElement, playerID, trickValue) {
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
-		currentElement.style.borderColor = "#303030";
-		currentElement.style.background = "black";
-		currentElement.style.color = "orange";
+		if (currentElement.className != "fakeBidTrickButton") {
+			currentElement.style.borderColor = "#303030";
+			currentElement.style.background = "black";
+			currentElement.style.color = "orange";
+		}
 	}
 	buttonElement.style.borderColor = "orange";
 	buttonElement.style.background = "orange";
@@ -1211,8 +1253,10 @@ function updateRoundResultStructure() {
 		} else {
 			myString += "Back to Current Round!";
 		}
-		myString +="</div>";
+	} else {
+		myString += "<div class=\"roundResultConfirmButton\" onclick=\"showView(1);\">Leaderboard";
 	}
+	myString += "</div>";
 	myString += "</div></div>";
 	document.getElementById("roundResultAreaWrapper").innerHTML = myString;
 }
