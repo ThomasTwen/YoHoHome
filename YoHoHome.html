@@ -46,6 +46,9 @@ a:visited {
 	font-size: 1.5em;
 	margin-left: 15px;
 }
+.miniInstructionHeadline {
+	font-size: 0.5em;
+}
 .userBoxMargin {
 	border-radius: 10px;
 	border: 2px solid orange;
@@ -53,7 +56,7 @@ a:visited {
 	padding: 10px;
 }
 .playerBoxMargin {
-	margin: 10px 5px;
+	margin: 0px 5px;
 	padding: 10px;
 }
 .nameEntry {
@@ -156,6 +159,7 @@ input:active, input:focus {
 	text-align: center;
 	width: 100%;
 	font-size: 1em;
+	margin-bottom: 10px;
 }
 .bidNameBoxWrapper {
 	width: 96%;
@@ -207,10 +211,10 @@ input:active, input:focus {
 .bidEntryErrorMessage, .trickEntryErrorMessage {
 	border-radius: 10px;
 	border: 2px solid red;
-	margin: 15px 10px;
+	margin: 5px 10px;
 	color: red;
 	font-size: 1em;
-	padding: 15px 5px;
+	padding: 15px 15px;
 	width: 70%;
 	margin-inline: auto;
 	text-align: center;
@@ -227,9 +231,9 @@ input:active, input:focus {
 .bidBackButton {
 	color: white;
 	background: #303030;
-	width: 30%;
+	width: 35%;
 	border-radius: 10px;
-	padding: 17px 7px;
+	padding: 14px 7px;
 	text-align: center;
 	border: 2px solid #303030;
 	font-size: 1em;
@@ -239,7 +243,7 @@ input:active, input:focus {
 .bidConfirmButton {
 	color: white;
 	background: orange;
-	width: 60%;
+	width: 55%;
 	border-radius: 10px;
 	padding: 7px;
 	text-align: center;
@@ -353,17 +357,17 @@ input:active, input:focus {
 .trickBackButton {
 	font-size: 1em;
 	background: #303030;
-	width: 30%;
+	width: 35%;
 	color: white;
 	border-radius: 10px;
-	padding: 17px 7px;
+	padding: 14px 7px;
 	text-align: center;
 	margin-right: 10px;
 }
 .trickConfirmButton {
 	color: white;
 	background: orange;
-	width: 60%;
+	width: 55%;
 	border-radius: 10px;
 	padding: 7px;
 	text-align: center;
@@ -434,6 +438,12 @@ input:active, input:focus {
 	border-radius: 10px;
 	padding: 17px 7px;
 	text-align: center;
+}
+.roundResultBottomInfo {
+	display: inline;
+	font-size: 1em;
+	color: white;
+	margin-top: 10px;
 }
 
 .leaderBoardArea {
@@ -670,7 +680,9 @@ function showView(view) {
 	}
 }
 function updateBidStructure() {
-	var myString = "<div class=\"bidInstructionString\">Round " + currentRound + ": Enter Bids</div>";
+	var myString = "<div class=\"bidInstructionString\">Round " + currentRound + ": ";
+	myString += players[((editingRound-1)%players.length)];
+	myString += " deals. Enter Bids</div>";
 	for (var i = 0; i < players.length; i++) {
 		myString += "<div class=\"playerBoxMargin bidUserBox\"><div class=\"bidNameBoxWrapper\"><div class=\"bidNameBox\">" + players[i] + "</div><div class=\"bidScoreBox\">";
 		if(currentRound > 1) {
@@ -701,7 +713,7 @@ function updateBidStructure() {
 	if (editingRound > 1) {
 		myString += "<div class=\"bidBackButton\" onclick=\"backFromBids()\">Back to Round " + (editingRound-1) + "</div>";
 	}
-	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">CONFIRM BIDS</div></div>";
+	myString += "<div class=\"bidConfirmButton\" onclick=\"confirmBids()\">FINISH BIDS</div></div>";
 	document.getElementById("bidAreaWrapper").innerHTML = myString;
 }
 
@@ -823,7 +835,7 @@ function updateTrickStructure() {
 	if (editingRound > 1) {	
 		myString += "<div class=\"trickBackButton\" onclick=\"trickBackButton()\">Back to Round " + (editingRound-1) + "</div>";
 	}
-	myString += "<div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">CONFIRM TRICKS</div></div>";
+	myString += "<div class=\"trickConfirmButton\" onclick=\"confirmTricks()\">FINISH TRICKS</div></div>";
 	document.getElementById("trickAreaWrapper").innerHTML = myString;
 }
 
@@ -1173,7 +1185,7 @@ function confirmTricks() {
 		}
 	} else {
 		//you might have less tricks than the round you are in, lets be friendly
-		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to continue?")) {
+		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Have you RELEASED THE KRAKEN?")) {
 			finish_round = true;
 		}
 	}
@@ -1256,8 +1268,9 @@ function updateRoundResultStructure() {
 	} else {
 		myString += "<div class=\"roundResultConfirmButton\" onclick=\"showView(1);\">Leaderboard";
 	}
-	myString += "</div>";
 	myString += "</div></div>";
+	myString +="<div class=\"roundResultBottomInfo\">Next round, " + players[((editingRound-1)%players.length)] + " deals.</div>";
+	myString += "</div>";
 	document.getElementById("roundResultAreaWrapper").innerHTML = myString;
 }
 
@@ -1428,7 +1441,7 @@ if (width < 500) {
 <div class="AppArea">
 <div class="nameEntryAreaWrapper" id="nameEntryAreaWrapper">
 	<div class="mainHeadline">YoHoHome</div>
-	<div class="instructionHeadline">Enter Player Names:</div>
+	<div class="instructionHeadline">Enter Player Names:<span class ="miniInstructionHeadline"><br>Start with the initial dealer!</span></div>
 	<div class="nameEntryArea" id="nameEntryArea"></div>
 	<div class="startGameErrorMessage" id="startGameErrorMessage">Please enter at least two names!</div>
 	<div class="startGameButton" id="startGameButton" onclick="startGame()">START GAME</div>
