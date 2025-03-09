@@ -377,17 +377,17 @@ input:active, input:focus {
 }
 .roundResultTableItemRank {
 	display: inline-block;
-	width: 150px;
+	width: 200px;
 	text-align: left;
 }
 .roundResultTableItemRound {
 	display: inline-block;
 	width: 100px;
-	text-align: left;
+	text-align: center;
 }
 .roundResultTableItemTotal {
 	display: inline-block;
-	width: 150px;
+	width: 100px;
 	text-align: right;
 }
 .roundResultConfirmButton {
@@ -1156,7 +1156,7 @@ function trickBackButton() {
 function getResultsTable() {
 	var myString = "<div class=\"roundResultTableWrapper\">";
 	//table header
-	myString +="<div class=\"roundResultTableHeaderRow\"><div class=\"roundResultTableItemRank\">#  Player</div><div class=\"roundResultTableItemRound\">Last Round</div><div class=\"roundResultTableItemTotal\">Total Score</div></div>"
+	myString +="<div class=\"roundResultTableHeaderRow\"><div class=\"roundResultTableItemRank\">#  Player</div><div class=\"roundResultTableItemRound\">Round</div><div class=\"roundResultTableItemTotal\">Total</div></div>"
 	//get total scores for all players
 	var results = new Array();
 	//loop through all players(!) and populate the array
