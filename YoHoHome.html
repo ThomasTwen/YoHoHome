@@ -1077,7 +1077,19 @@ function setPlayerResultString(playerID) {
 	}
 	//we are done with building the array
 	if (output != "") {
-		output = players[playerID] + " has" + output + ", for a potential bonus of up to " + getPotentialSpecialScore(editingRound, playerID) + "!";
+		//Maybe we have only one bonus thats already a number
+		if (earned_used && !previous_alliances && !captured_used && gameData[editingRound][playerID][2]+gameData[editingRound][playerID][3]+gameData[editingRound][playerID][7] == 1) {
+			//we add in the "potential" in the first part of the string rather than add a second part to save space
+			//if its a -10 we dont say potential (because its guaranteed)
+			if (gameData[editingRound][playerID][7] == 0) {
+				output = players[playerID] + " has" + output.replace("earned a", "earned a potential") + "!";
+			} else {
+				output = players[playerID] + " has" + output + "!";
+			}
+		} else {
+			//Nope, its something complicated
+			output = players[playerID] + " has" + output + ", for a potential bonus of up to " + getPotentialSpecialScore(editingRound, playerID) + "!";
+		}
 	}
 	document.getElementById("trickPlayerSpecialTextBox" + playerID).innerHTML = output;
 }
