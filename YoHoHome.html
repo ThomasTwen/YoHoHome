@@ -40,6 +40,10 @@ a:link {
 a:visited {
 	color: lightblue;
 }
+.aboutText a {
+	color: lightblue;
+	text-decoration: underline;
+}
 .instructionHeadline {
 	color: orange;
 	font-size: 1.5em;
@@ -467,11 +471,25 @@ input:active, input:focus {
 	width: 450px;
 	margin-inline: auto;
 }
+
+#restoreButton {
+	font-size: 1.5em;
+	background: orange;
+	width: 70%;
+	color: white;
+	border-radius: 10px;
+	padding: 17px 7px;
+	text-align: center;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	display: none;
+	
+}
 </style>
 <script type="text/javascript">
 var allowGameStart = false;
 var players = new Array();
-var totalscores = new Array();
 var gameData = new Array();
 // first round, then player
 // bid - trick - +10, +20, mermaid, pirate, king, -10
@@ -1473,11 +1491,68 @@ var width = document.documentElement.clientWidth;
 if (width < 500) {
 	document.querySelector('meta[name=viewport]').setAttribute('content', 'width=500px');
 }
+
+//Save state before refresh or navigation
+window.addEventListener("beforeunload", (event) => {
+    if (gameData.length > 0 && currentRound < 11) {
+    	event.preventDefault();
+        event.returnValue = "Are you sure you want to leave? Changes may be lost.";
+    	myData = ({players: players, gameData: gameData, alliances: alliances, currentRound: currentRound, currentGameView: currentGameView});
+        // Save current state in history
+    	localStorage.setItem("savedData", JSON.stringify(myData));
+    }
+});
+
+//Show restore button if data exists in history state
+window.addEventListener("pageshow", (event) => {
+	if (localStorage.getItem("savedData")) {
+        document.getElementById("restoreButton").style.display = "block";
+    }
+});
+
+// Restore data when user clicks the button
+function restoreLastGame() {
+	const savedState = JSON.parse(localStorage.getItem("savedData"));
+    if (savedState) {
+    	// Restore variables
+        gameData = savedState.gameData;
+        alliances = savedState.alliances;
+        currentRound = savedState.currentRound;
+        editingRound = currentRound;
+        players = savedState.players;
+        currentGameView = savedState.currentGameView;
+    	//updateUI
+    	if (currentGameView == 0) {
+    		currentRoundBidsDone = false;
+    		updateBidStructure();
+    	} else if (currentGameView == 1){
+    		currentRoundBidsDone = true;
+    		updateTrickStructure();
+    	} else {
+    		currentRoundBidsDone = true;
+    		updateRoundResultStructure();
+    	}
+        showView(0);
+        document.getElementById("restoreButton").style.display = "none"; // Hide button after restoring
+		//show the right divs
+		document.getElementById("nameEntryAreaWrapper").style.display = "none";
+		document.getElementById("gameAreaWrapper").style.display = "block";
+		document.getElementById("bidAreaWrapper").style.display = "block";
+		document.getElementById("gameViewSelectorButton").style.borderBottom="2px solid black";
+    }
+}
+
+function deleteLocalStorage() {
+	localStorage.clear(); 
+	document.getElementById("restoreButton").style.display = "none"; 
+	alert("Data deleted!");
+}
 </script>
 </head>
 <body onLoad="nameEntryChange()">
 <div class="AppArea">
 <div class="nameEntryAreaWrapper" id="nameEntryAreaWrapper">
+	<div id="restoreButton" onclick="restoreLastGame()">Restore Last Game</div>
 	<div class="mainHeadline">YoHoHome</div>
 	<div class="instructionHeadline">Enter Player Names:<span class ="miniInstructionHeadline"><br>Start with the initial dealer!</span></div>
 	<div class="nameEntryArea" id="nameEntryArea"></div>
@@ -1510,7 +1585,8 @@ Yes, by clicking on them in the text.<br><br>
 <b>How can I handle the pirate bets?</b><br>
 By adding +/-10 manually. The -10 "bonus" is always applied, even if a player loses.<br><br>
 
-<b>Is this app storing any of my data?</b><br>No! This is a website with no permanent storage whatsoever; everything is gone as soon as you close or reload the page. If you reload it by accident, the "back" functionality in your browser will probably save you.<br>
+<b>Is this app storing any of my data?</b><br>No! This is a website with no backend. It stores only the current game and only locally on your PC. This one game is stored permanently in your browser for recovery if you accidentally close the page. 
+Your browser probably deletes it periodically; you can <a onclick="deleteLocalStorage()">delete it all now!</a><br>
 This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br>
 This app loads the piratey font from Google Fonts.
 <br><br>
