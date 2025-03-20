@@ -484,7 +484,42 @@ input:active, input:focus {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	display: none;
-	
+}
+
+dialog {
+	background: black;
+	border: 2px solid orange;
+	color: white;
+	font-size: 1.5em;
+	border-radius: 30px;
+	width: 490px;
+	outline: none;
+	text-align: center;
+}
+dialog::backdrop {
+	background-color: #303030;
+}
+
+.dialogButtonArea {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+.dialogButton {
+	background: #303030;
+	border-radius: 10px;
+	color: white;
+	padding: 10px;
+	font-size: 1em;
+}
+
+.dialogButtonFocus {
+	background: orange;
+	border-radius: 10px;
+	color: white;
+	padding: 10px;
+	font-size: 1em;
+
 }
 </style>
 <script type="text/javascript">
@@ -1211,32 +1246,37 @@ function confirmTricks() {
 	for (var i = 0; i < players.length; i++) {
 		selected_tricks += gameData[editingRound][i][1];
 	}
-	var finish_round = false;
 	if (selected_tricks == editingRound) {
-		finish_round = true;
+		actualEndRound(2);
 	} else if (selected_tricks > editingRound) {
 		//you cant have more tricks than the round you are in
-		if (!confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Do you want to change this?")) {
-			finish_round = true;
-		}
+		document.getElementById("tooManyDialog").children[0].innerHTML = "You selected " + selected_tricks + " tricks in round " + editingRound + "!";
+		document.getElementById("tooManyDialog").showModal();
 	} else {
 		//you might have less tricks than the round you are in, lets be friendly
-		if (confirm("You selected " + selected_tricks + " tricks in round " + editingRound + "! Have you RELEASED THE KRAKEN?")) {
-			finish_round = true;
-		}
-	}
-	if (finish_round) {
-		//round is over, do something now
-		currentGameView = 2;
-		showView(0);
-		if (editingRound == currentRound) {
-			currentRound++;
-			editingRound++;
-			currentRoundBidsDone = false;
-		}
-		updateRoundResultStructure();
+		document.getElementById("tooFewDialog").children[0].innerHTML ="You selected only " + selected_tricks + " tricks in round " + editingRound + "!";
+		document.getElementById("tooFewDialog").showModal();
 	}
 }
+
+function actualEndRound(dialogId) {
+	//round is actually over
+	currentGameView = 2;
+	showView(0);
+	if (editingRound == currentRound) {
+		currentRound++;
+		editingRound++;
+		currentRoundBidsDone = false;
+	}
+	updateRoundResultStructure();
+	//hide the dialog if necessary
+	if (dialogId == 0) {
+		document.getElementById("tooFewDialog").close();
+	} else if (dialogId == 1){
+		document.getElementById("tooManyDialog").close();
+	}
+}
+
 function trickBackButton() {
 	//user wants to edit the previous round of tricks
 	editingRound--;
@@ -1586,7 +1626,7 @@ Yes, by clicking on them in the text.<br><br>
 By adding +/-10 manually. The -10 "bonus" is always applied, even if a player loses.<br><br>
 
 <b>Is this app storing any of my data?</b><br>No! This is a website with no backend. It stores only the current game and only locally on your PC. This one game is stored permanently in your browser for recovery if you accidentally close the page. 
-Your browser probably deletes it periodically; you can <a onclick="deleteLocalStorage()">delete it all now!</a><br>
+Your browser probably allows you to configure this storage somewhere in the settings; you can also <a onclick="deleteLocalStorage()">delete it all now!</a><br>
 This file is currently hosted on GitHub Pages; I guess they could somehow see that you downloaded it.<br>
 This app loads the piratey font from Google Fonts.
 <br><br>
@@ -1606,6 +1646,31 @@ Special Thanks to Johannes Rau for his critical and yet surprisingly positive fe
 </div>
 </div>
 <div id="emptyDiv" style="display: none;"></div>
+
+<dialog id="tooFewDialog">
+  <p></p>
+  <div class="dialogButtonArea">
+  <div class="dialogButton" onclick="document.getElementById('tooFewDialog').close();">Fix it</div>
+  <div class="dialogButtonFocus" onclick="actualEndRound(0)">I have released the Kraken!</div>
+  </div>
+</dialog>
+<dialog id="tooManyDialog">
+  <p></p>
+  <div class="dialogButtonArea">
+  <div class="dialogButton" onclick="actualEndRound(1)">Bad idea</div>
+  <div class="dialogButtonFocus" onclick="document.getElementById('tooManyDialog').close();">I want to fix the issue!</div>
+  </div>
+</dialog>
+<dialog id="myDialog">
+  <p>Are you sure?</p>
+  <button id="yesBtn">Yes</button>
+  <button id="noBtn" autofocus>No</button>
+</dialog>
+<dialog id="myDialog">
+  <p>Are you sure?</p>
+  <button id="yesBtn">Yes</button>
+  <button id="noBtn" autofocus>No</button>
+</dialog>
 <script type="text/javascript">
 /**
  * Skipped minification because the original files appears to be already minified.
