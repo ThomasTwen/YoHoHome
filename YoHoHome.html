@@ -230,7 +230,7 @@ input:active, input:focus {
 .bidBackButton {
 	color: white;
 	background: #303030;
-	width: 35%;
+	width: 40%;
 	border-radius: 10px;
 	padding: 14px 7px;
 	text-align: center;
@@ -242,12 +242,12 @@ input:active, input:focus {
 .bidConfirmButton {
 	color: white;
 	background: orange;
-	width: 55%;
+	width: 50%;
 	border-radius: 10px;
-	padding: 7px;
+	padding: 14px 7px;
 	text-align: center;
 	border: 2px solid orange;
-	font-size: 1.5em;
+	font-size: 1em;
 	display: inline;
 }
 .trickPlayerColorBox {
@@ -356,7 +356,7 @@ input:active, input:focus {
 .trickBackButton {
 	font-size: 1em;
 	background: #303030;
-	width: 35%;
+	width: 40%;
 	color: white;
 	border-radius: 10px;
 	padding: 14px 7px;
@@ -366,11 +366,11 @@ input:active, input:focus {
 .trickConfirmButton {
 	color: white;
 	background: orange;
-	width: 55%;
+	width: 50%;
 	border-radius: 10px;
-	padding: 7px;
+	padding: 14px 7px;
 	text-align: center;
-	font-size: 1.5em;
+	font-size: 1em;
 }
 .leaderBoardAreaWrapper {
 	display: none;
@@ -725,21 +725,23 @@ function backFromBids() {
 	updateTrickStructure();
 }
 function bidClick(buttonElement, playerID, bidValue) {
+	//write values into the data structure
+	gameData[editingRound][playerID][0] = bidValue;
+	//begin with changing button colors to be responsive
+	buttonElement.style.borderColor = "orange";
+	buttonElement.style.background = "orange";
+	buttonElement.style.color = "white";
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
-		if (currentElement.className != "fakeBidTrickButton") {
+		if (currentElement.className != "fakeBidTrickButton" && currentElement != buttonElement) {
 			currentElement.style.borderColor = "#303030";
 			currentElement.style.background = "black";
 			currentElement.style.color = "orange";
 		}
 	}
-	buttonElement.style.borderColor = "orange";
-	buttonElement.style.background = "orange";
-	buttonElement.style.color = "white";
-	//write values into the data structure
-	gameData[editingRound][playerID][0] = bidValue;
-	//alert("Clicked player" + playerId + " and value " + bidValue);
+	
+	
 }
 function confirmBids() {
 	//loop over all players to get their results; identify if all have been filled out
@@ -890,20 +892,23 @@ function trickViewEditBidClick(buttonElement, playerID, direction) {
 
 function trickClick(buttonElement, playerID, trickValue) {
 	//the user clicked on one of the numbers for setting a trick
+	//write values into the data structure
+	gameData[editingRound][playerID][1] = trickValue;
+	//change button colors
+	buttonElement.style.borderColor = "orange";
+	buttonElement.style.background = "orange";
+	buttonElement.style.color = "white";
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
-		if (currentElement.className != "fakeBidTrickButton") {
+		if (currentElement.className != "fakeBidTrickButton" && currentElement != buttonElement) {
 			currentElement.style.borderColor = "#303030";
 			currentElement.style.background = "black";
 			currentElement.style.color = "orange";
 		}
 	}
-	buttonElement.style.borderColor = "orange";
-	buttonElement.style.background = "orange";
-	buttonElement.style.color = "white";
-	//write values into the data structure
-	gameData[editingRound][playerID][1] = trickValue;
+	
+	
 }
 function specialTrickClick(buttonElement, playerID, trickID) {
 	//the order is bid, trick, +10, +20, mermaid, pirate, king
