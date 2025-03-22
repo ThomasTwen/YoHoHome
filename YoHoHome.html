@@ -1537,22 +1537,37 @@ window.addEventListener("beforeunload", (event) => {
     if (gameData.length > 0 && currentRound < 11) {
     	event.preventDefault();
         event.returnValue = "Are you sure you want to leave? Changes may be lost.";
-    	myData = ({players: players, gameData: gameData, alliances: alliances, currentRound: currentRound, currentGameView: currentGameView});
-        // Save current state in history
-    	localStorage.setItem("savedData", JSON.stringify(myData));
+    	saveData();
     }
 });
+//deal with iOS problems
+if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i);) {
+	window.addEventListener("pagehide", function (event) {
+        saveData();
+    });
+}
+
+function saveData() {
+	myData = ({players: players, gameData: gameData, alliances: alliances, currentRound: currentRound, currentGameView: currentGameView});
+    // Save current state in history (both types of history in case browsers behave weirdly)
+    sessionStorage.setItem("savedData", JSON.stringify(myData));
+	localStorage.setItem("savedData", JSON.stringify(myData));
+}
 
 //Show restore button if data exists in history state
 window.addEventListener("pageshow", (event) => {
-	if (localStorage.getItem("savedData")) {
+	if (localStorage.getItem("savedData") || localStorage.getItem("savedData")) {
         document.getElementById("restoreButton").style.display = "block";
     }
 });
 
 // Restore data when user clicks the button
 function restoreLastGame() {
-	const savedState = JSON.parse(localStorage.getItem("savedData"));
+	if (localStorage.getItem("savedData")) {
+		const savedState = JSON.parse(localStorage.getItem("savedData"));
+	} else {
+		const savedState = JSON.parse(sessionStorage.getItem("savedData"));
+	}
     if (savedState) {
     	// Restore variables
         gameData = savedState.gameData;
@@ -1583,7 +1598,8 @@ function restoreLastGame() {
 }
 
 function deleteLocalStorage() {
-	localStorage.clear(); 
+	localStorage.clear();
+	sessionStorage.clear();
 	document.getElementById("restoreButton").style.display = "none"; 
 	alert("Data deleted!");
 }
