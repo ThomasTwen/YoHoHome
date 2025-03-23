@@ -50,7 +50,8 @@ a:visited {
 	margin-left: 15px;
 }
 .miniInstructionHeadline {
-	font-size: 0.5em;
+	font-size: 1em;
+	color: orange;
 }
 .userBoxMargin {
 	border-radius: 10px;
@@ -95,15 +96,13 @@ input[type=text] {
   font-size: 1.5em;
   border-radius: 5px;
   border: none;
-  font-weight: bold;
   vertical-align: middle;
   text-align: center;
   padding: 5px;
   width: 330px;
+  outline: none;
 }
-input:active, input:focus {
-	outline: none;
-}
+
 .startGameErrorMessage {
 	border-radius: 10px;
 	border: 2px solid #303030;
@@ -1610,10 +1609,11 @@ function deleteLocalStorage() {
 <div class="nameEntryAreaWrapper" id="nameEntryAreaWrapper">
 	<div id="restoreButton" onclick="restoreLastGame()">Restore Last Game</div>
 	<div class="mainHeadline">YoHoHome</div>
-	<div class="instructionHeadline">Enter Player Names:<span class ="miniInstructionHeadline"><br>Start with the initial dealer!</span></div>
+	<div class="instructionHeadline">Enter Player Names:</div>
+	<div class ="miniInstructionHeadline">Start with the initial dealer!</div>
 	<div class="nameEntryArea" id="nameEntryArea"></div>
 	<div class="startGameErrorMessage" id="startGameErrorMessage">Please enter at least two names!</div>
-	<div class="startGameButton" id="startGameButton" onclick="startGame()">START GAME</div>
+	<div class="startGameButton" id="startGameButton" onclick="startGame()">Start Game</div>
 </div>
 <div class="gameAreaWrapper" id="gameAreaWrapper">
 	<div class="viewSelectorWrapper" id="viewSelectorWrapper">
