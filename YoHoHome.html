@@ -778,12 +778,13 @@ function backFromBids() {
 	updateTrickStructure();
 }
 function bidClick(buttonElement, playerID, bidValue) {
-	//write values into the data structure
-	gameData[editingRound][playerID][0] = bidValue;
 	//begin with changing button colors to be responsive
-	buttonElement.style.borderColor = "orange";
 	buttonElement.style.background = "orange";
 	buttonElement.style.color = "white";
+	buttonElement.style.borderColor = "orange";
+	buttonElement.hide().show();
+	//write values into the data structure
+	gameData[editingRound][playerID][0] = bidValue;
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
@@ -945,12 +946,13 @@ function trickViewEditBidClick(buttonElement, playerID, direction) {
 
 function trickClick(buttonElement, playerID, trickValue) {
 	//the user clicked on one of the numbers for setting a trick
-	//write values into the data structure
-	gameData[editingRound][playerID][1] = trickValue;
 	//change button colors
-	buttonElement.style.borderColor = "orange";
 	buttonElement.style.background = "orange";
 	buttonElement.style.color = "white";
+	buttonElement.style.borderColor = "orange";
+	buttonElement.hide().show();
+	//write values into the data structure
+	gameData[editingRound][playerID][1] = trickValue;
 	//Loop over all elements and format them as non-clicked, then fix the one that was actually clicked
 	for (var i = 1; i < buttonElement.parentElement.children.length; i++) {
 		currentElement = buttonElement.parentElement.children[i];
@@ -1449,7 +1451,8 @@ function updateLeaderBoardStructure() {
 			  },
 			  scales: {
 					y: {
-						suggestedMin: 0, 
+						suggestedMin: 0,
+						suggestedMax: 0,
 						title: {text: "Points", display: true}
 					}, 
 					x: {
