@@ -1541,7 +1541,7 @@ window.addEventListener("beforeunload", (event) => {
     }
 });
 //deal with iOS problems
-if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i);) {
+if (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) {
 	window.addEventListener("pagehide", function (event) {
         saveData();
     });
